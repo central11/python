@@ -1,0 +1,3181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Reference Guide - Windows 95 Edition</title>
+<style>
+@font-face {
+  font-family: 'W95FA';
+  src: url('data:application/font-woff2;charset=utf-8;base64,') format('woff2');
+}
+
+:root {
+  --win-bg: #008080;
+  --win-silver: #c0c0c0;
+  --win-dark: #808080;
+  --win-white: #ffffff;
+  --win-black: #000000;
+  --win-blue: #000080;
+  --win-title-blue: #000080;
+  --win-highlight: #0000aa;
+  --win-light: #dfdfdf;
+  --win-border-light: #ffffff;
+  --win-border-dark: #404040;
+  --win-btn-face: #c0c0c0;
+  --win-yellow: #ffff00;
+  --win-green: #008000;
+  --win-red: #ff0000;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+@font-face {
+  font-family: 'PixelFont';
+  src: local('MS Sans Serif'), local('Microsoft Sans Serif'), local('Fixedsys'), local('Terminal');
+}
+
+body {
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 11px;
+  background: var(--win-bg);
+  color: var(--win-black);
+  min-height: 100vh;
+  image-rendering: pixelated;
+  overflow-x: hidden;
+}
+
+/* Win95 3D border helpers */
+.raised {
+  border: 2px solid;
+  border-color: var(--win-border-light) var(--win-border-dark) var(--win-border-dark) var(--win-border-light);
+}
+.sunken {
+  border: 2px solid;
+  border-color: var(--win-border-dark) var(--win-border-light) var(--win-border-light) var(--win-border-dark);
+}
+
+/* DESKTOP */
+.desktop {
+  min-height: 100vh;
+  padding: 8px;
+  padding-bottom: 40px;
+}
+
+/* TASKBAR */
+.taskbar {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  height: 32px;
+  background: var(--win-silver);
+  border-top: 2px solid var(--win-border-light);
+  display: flex; align-items: center;
+  padding: 2px 4px;
+  z-index: 10000;
+}
+.start-btn {
+  display: flex; align-items: center; gap: 4px;
+  padding: 2px 8px; height: 24px;
+  background: var(--win-silver);
+  border: 2px solid;
+  border-color: var(--win-border-light) var(--win-border-dark) var(--win-border-dark) var(--win-border-light);
+  font-weight: bold; font-size: 11px;
+  cursor: pointer; font-family: inherit;
+}
+.start-btn:active {
+  border-color: var(--win-border-dark) var(--win-border-light) var(--win-border-light) var(--win-border-dark);
+}
+.start-logo { font-size: 14px; }
+.taskbar-clock {
+  margin-left: auto;
+  padding: 2px 8px;
+  border: 1px solid;
+  border-color: var(--win-border-dark) var(--win-border-light) var(--win-border-light) var(--win-border-dark);
+  font-size: 11px;
+}
+.taskbar-items {
+  display: flex; gap: 2px; margin-left: 8px; flex: 1; overflow: hidden;
+}
+.taskbar-item {
+  padding: 2px 6px; height: 22px;
+  background: var(--win-silver);
+  border: 1px solid;
+  border-color: var(--win-border-dark) var(--win-border-light) var(--win-border-light) var(--win-border-dark);
+  font-size: 10px; cursor: pointer;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  max-width: 140px; font-family: inherit;
+  display: flex; align-items: center; gap: 3px;
+}
+.taskbar-item.active {
+  border-color: var(--win-border-dark) var(--win-border-light) var(--win-border-light) var(--win-border-dark);
+  background: #b0b0b0;
+  font-weight: bold;
+}
+
+/* WINDOW */
+.window {
+  background: var(--win-silver);
+  border: 2px solid;
+  border-color: var(--win-border-light) var(--win-border-dark) var(--win-border-dark) var(--win-border-light);
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+  position: absolute;
+  min-width: 300px;
+  display: flex; flex-direction: column;
+}
+.window.maximized {
+  position: fixed !important;
+  top: 0 !important; left: 0 !important;
+  width: 100vw !important; height: calc(100vh - 32px) !important;
+  box-shadow: none;
+  z-index: 1000;
+}
+.window-title {
+  background: linear-gradient(90deg, var(--win-title-blue), #1084d0);
+  color: white;
+  padding: 2px 4px;
+  display: flex; align-items: center;
+  font-weight: bold; font-size: 11px;
+  cursor: grab;
+  user-select: none;
+}
+.window.inactive .window-title {
+  background: linear-gradient(90deg, #808080, #b0b0b0);
+}
+.window-title-text { flex: 1; padding-left: 4px; }
+.window-title-icon { font-size: 12px; margin-right: 2px; }
+.title-buttons { display: flex; gap: 2px; }
+.title-btn {
+  width: 16px; height: 14px;
+  background: var(--win-silver);
+  border: 1px solid;
+  border-color: var(--win-border-light) var(--win-border-dark) var(--win-border-dark) var(--win-border-light);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 8px; font-weight: bold;
+  cursor: pointer; font-family: inherit; padding: 0;
+  line-height: 1;
+}
+.title-btn:active {
+  border-color: var(--win-border-dark) var(--win-border-light) var(--win-border-light) var(--win-border-dark);
+}
+
+/* MENU BAR */
+.menu-bar {
+  display: flex; gap: 0; padding: 1px 2px;
+  background: var(--win-silver);
+  border-bottom: 1px solid var(--win-dark);
+}
+.menu-item {
+  padding: 2px 8px; cursor: pointer; font-size: 11px;
+}
+.menu-item:hover { background: var(--win-blue); color: white; }
+
+/* WINDOW BODY */
+.window-body {
+  flex: 1; overflow: auto;
+  background: var(--win-silver);
+}
+.window-body-white {
+  flex: 1; overflow: auto;
+  background: white;
+  border: 2px solid;
+  border-color: var(--win-border-dark) var(--win-border-light) var(--win-border-light) var(--win-border-dark);
+  margin: 2px;
+}
+
+/* STATUS BAR */
+.status-bar {
+  display: flex;
+  border-top: 1px solid var(--win-dark);
+  padding: 2px 4px;
+  font-size: 10px;
+  background: var(--win-silver);
+}
+.status-section {
+  padding: 0 8px;
+  border: 1px solid;
+  border-color: var(--win-border-dark) var(--win-border-light) var(--win-border-light) var(--win-border-dark);
+  flex: 1;
+}
+
+/* TABS (like property sheets) */
+.tab-container { margin: 4px; }
+.tab-bar {
+  display: flex; gap: 0; padding-left: 4px;
+  position: relative; top: 2px; z-index: 2;
+  flex-wrap: wrap;
+}
+.tab-btn {
+  padding: 4px 12px;
+  background: var(--win-silver);
+  border: 2px solid;
+  border-color: var(--win-border-light) var(--win-border-dark) var(--win-silver) var(--win-border-light);
+  border-bottom: none;
+  cursor: pointer; font-family: inherit;
+  font-size: 11px; position: relative;
+  border-radius: 2px 2px 0 0;
+}
+.tab-btn.active {
+  background: var(--win-silver);
+  border-bottom: 2px solid var(--win-silver);
+  z-index: 3;
+  margin-bottom: -2px;
+  font-weight: bold;
+}
+.tab-content {
+  border: 2px solid;
+  border-color: var(--win-border-light) var(--win-border-dark) var(--win-border-dark) var(--win-border-light);
+  background: var(--win-silver);
+  padding: 12px;
+  position: relative;
+  z-index: 1;
+  min-height: 200px;
+}
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* SEARCH BAR */
+.search-container {
+  padding: 4px 6px;
+  background: var(--win-silver);
+  display: flex; align-items: center; gap: 4px;
+  border-bottom: 1px solid var(--win-dark);
+}
+.search-container label { font-size: 11px; font-weight: bold; }
+.search-input {
+  flex: 1; padding: 2px 4px;
+  border: 2px solid;
+  border-color: var(--win-border-dark) var(--win-border-light) var(--win-border-light) var(--win-border-dark);
+  font-family: inherit; font-size: 11px;
+  background: white;
+}
+.search-input:focus { outline: 1px dotted var(--win-black); }
+.search-btn {
+  padding: 2px 12px;
+  background: var(--win-silver);
+  border: 2px solid;
+  border-color: var(--win-border-light) var(--win-border-dark) var(--win-border-dark) var(--win-border-light);
+  cursor: pointer; font-family: inherit; font-size: 11px;
+}
+.search-btn:active {
+  border-color: var(--win-border-dark) var(--win-border-light) var(--win-border-light) var(--win-border-dark);
+}
+
+/* TAG CHIPS */
+.tag {
+  display: inline-block;
+  padding: 1px 6px; margin: 1px 2px;
+  background: var(--win-silver);
+  border: 1px solid var(--win-dark);
+  font-size: 9px; cursor: pointer;
+  color: var(--win-blue);
+}
+.tag:hover { background: var(--win-blue); color: white; }
+
+/* CARDS / LIST ITEMS */
+.card {
+  background: white;
+  border: 2px solid;
+  border-color: var(--win-border-dark) var(--win-border-light) var(--win-border-light) var(--win-border-dark);
+  margin: 4px 0; padding: 8px;
+}
+.card-title {
+  font-weight: bold; font-size: 12px;
+  color: var(--win-blue); margin-bottom: 4px;
+  cursor: pointer;
+}
+.card-title:hover { text-decoration: underline; }
+.card-desc { font-size: 11px; color: #333; margin-bottom: 4px; }
+.card-code {
+  background: var(--win-black);
+  color: #00ff00;
+  padding: 6px 8px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 11px;
+  border: 2px solid;
+  border-color: var(--win-border-dark) var(--win-border-light) var(--win-border-light) var(--win-border-dark);
+  white-space: pre-wrap;
+  overflow-x: auto;
+  margin: 4px 0;
+  display: none;
+  max-height: 600px;
+  overflow-y: auto;
+}
+.card-code.show { display: block; }
+.card-tags { margin-top: 4px; }
+
+/* TREE VIEW */
+.tree-item {
+  padding: 1px 0 1px 16px;
+  cursor: pointer; font-size: 11px;
+  position: relative;
+}
+.tree-item::before {
+  content: '📄'; margin-right: 4px; font-size: 10px;
+}
+.tree-item.folder::before { content: '📁'; }
+.tree-item.folder.open::before { content: '📂'; }
+.tree-item:hover { background: var(--win-blue); color: white; }
+.tree-children { display: none; }
+.tree-children.open { display: block; }
+
+/* GROUP BOX */
+.group-box {
+  border: 1px solid var(--win-dark);
+  padding: 12px 8px 8px;
+  margin: 8px 0;
+  position: relative;
+}
+.group-box-title {
+  position: absolute; top: -8px; left: 8px;
+  background: var(--win-silver);
+  padding: 0 4px; font-size: 11px;
+  font-weight: bold;
+}
+
+/* BUTTONS */
+.win-btn {
+  padding: 3px 16px;
+  background: var(--win-silver);
+  border: 2px solid;
+  border-color: var(--win-border-light) var(--win-border-dark) var(--win-border-dark) var(--win-border-light);
+  cursor: pointer; font-family: inherit; font-size: 11px;
+}
+.win-btn:active {
+  border-color: var(--win-border-dark) var(--win-border-light) var(--win-border-light) var(--win-border-dark);
+}
+.win-btn:focus { outline: 1px dotted var(--win-black); outline-offset: -4px; }
+
+/* PROGRESS BAR */
+.progress-bar {
+  height: 16px;
+  border: 2px solid;
+  border-color: var(--win-border-dark) var(--win-border-light) var(--win-border-light) var(--win-border-dark);
+  background: var(--win-silver);
+}
+.progress-fill {
+  height: 100%;
+  background: var(--win-blue);
+}
+
+/* SCROLLBAR STYLING */
+::-webkit-scrollbar { width: 16px; height: 16px; }
+::-webkit-scrollbar-track { background: #dfdfdf; }
+::-webkit-scrollbar-thumb {
+  background: var(--win-silver);
+  border: 2px solid;
+  border-color: var(--win-border-light) var(--win-border-dark) var(--win-border-dark) var(--win-border-light);
+}
+::-webkit-scrollbar-button {
+  background: var(--win-silver);
+  border: 1px solid;
+  border-color: var(--win-border-light) var(--win-border-dark) var(--win-border-dark) var(--win-border-light);
+  width: 16px; height: 16px;
+}
+
+/* TOOLTIP */
+.tooltip {
+  background: #ffffe1;
+  border: 1px solid var(--win-black);
+  padding: 2px 4px;
+  font-size: 10px;
+  position: absolute;
+  z-index: 9999;
+  pointer-events: none;
+  display: none;
+}
+
+/* SECTION HEADER */
+.section-header {
+  background: var(--win-blue);
+  color: white;
+  padding: 4px 8px;
+  font-weight: bold;
+  font-size: 12px;
+  margin: 8px 0 4px;
+  display: flex; align-items: center; gap: 6px;
+}
+.section-header .icon { font-size: 14px; }
+
+/* HIGHLIGHT for search */
+.highlight { background: yellow; color: black; font-weight: bold; }
+
+/* LAYOUT */
+.main-app {
+  width: 95vw;
+  max-width: 1100px;
+  margin: 8px auto;
+  position: relative;
+}
+.window.main-window {
+  position: relative;
+  width: 100%;
+  min-height: 90vh;
+}
+
+/* INSTALL STEPS */
+.step {
+  display: flex; gap: 8px; margin: 6px 0;
+  align-items: flex-start;
+}
+.step-num {
+  background: var(--win-blue);
+  color: white;
+  width: 20px; height: 20px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: bold; font-size: 10px;
+  flex-shrink: 0;
+}
+.step-text { font-size: 11px; flex: 1; }
+.step-text code {
+  background: white;
+  border: 1px solid var(--win-dark);
+  padding: 0 3px;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+}
+
+/* CHECKBOX */
+.win-check {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 11px; cursor: pointer; padding: 1px 0;
+}
+.win-check input[type="checkbox"] {
+  width: 13px; height: 13px;
+  accent-color: var(--win-black);
+}
+
+/* CATEGORY FILTER */
+.category-filters {
+  display: flex; flex-wrap: wrap; gap: 2px; padding: 4px;
+}
+.cat-btn {
+  padding: 2px 8px;
+  background: var(--win-silver);
+  border: 1px solid var(--win-dark);
+  cursor: pointer; font-family: inherit;
+  font-size: 10px;
+}
+.cat-btn.active { background: var(--win-blue); color: white; }
+
+/* HIDDEN */
+.hidden { display: none !important; }
+
+/* ABOUT DIALOG OVERLAY */
+.dialog-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.3);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 20000;
+}
+.dialog-overlay.hidden { display: none; }
+.dialog-window {
+  background: var(--win-silver);
+  border: 2px solid;
+  border-color: var(--win-border-light) var(--win-border-dark) var(--win-border-dark) var(--win-border-light);
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.4);
+  width: 340px;
+}
+.dialog-body { padding: 16px; text-align: center; }
+.dialog-body p { margin: 6px 0; font-size: 11px; }
+.dialog-footer { text-align: center; padding: 8px; }
+
+/* NO RESULTS */
+.no-results {
+  text-align: center; padding: 32px;
+  color: var(--win-dark);
+}
+.no-results .sad { font-size: 32px; margin-bottom: 8px; }
+
+/* COUNT BADGE */
+.count-badge {
+  background: var(--win-blue); color: white;
+  padding: 0 5px; font-size: 9px;
+  margin-left: 4px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 700px) {
+  .main-app { width: 100vw; margin: 0; }
+  .window.main-window { min-width: unset; }
+  .tab-btn { padding: 3px 6px; font-size: 10px; }
+}
+</style>
+</head>
+<body>
+
+<div class="desktop">
+  <div class="main-app">
+    <div class="window main-window" id="mainWindow">
+      <!-- TITLE BAR -->
+      <div class="window-title" id="titleBar">
+        <span class="window-title-icon">🐍</span>
+        <span class="window-title-text">Python Reference Guide v3.12 — [C:\PYTHON\GUIDE.HLP]</span>
+        <div class="title-buttons">
+          <button class="title-btn" title="Minimize" onclick="toggleMinimize()">_</button>
+          <button class="title-btn" title="Maximize" onclick="toggleMaximize()">□</button>
+          <button class="title-btn" title="Close" onclick="showAbout()">✕</button>
+        </div>
+      </div>
+
+      <!-- MENU BAR -->
+      <div class="menu-bar">
+        <span class="menu-item" onclick="showTab('install')">📋 Install</span>
+        <span class="menu-item" onclick="showTab('commands')">⌨️ Commands</span>
+        <span class="menu-item" onclick="showTab('packages')">📦 Packages</span>
+        <span class="menu-item" onclick="showTab('workflows')">🔧 Workflows</span>
+        <span class="menu-item" onclick="showAbout()">❓ About</span>
+      </div>
+
+      <!-- SEARCH BAR -->
+      <div class="search-container">
+        <label>🔍 Find:</label>
+        <input type="text" class="search-input" id="globalSearch" placeholder="Search commands, packages, workflows, tags..." oninput="globalSearchHandler()">
+        <button class="search-btn" onclick="globalSearchHandler()">Search</button>
+        <button class="search-btn" onclick="clearSearch()">Clear</button>
+        <span id="resultCount" style="font-size:10px;margin-left:4px;"></span>
+      </div>
+
+      <!-- CATEGORY FILTER BAR -->
+      <div class="category-filters" id="categoryFilters">
+        <button class="cat-btn active" onclick="filterCategory('all', this)">All</button>
+        <button class="cat-btn" onclick="filterCategory('beginner', this)">🟢 Beginner</button>
+        <button class="cat-btn" onclick="filterCategory('intermediate', this)">🟡 Intermediate</button>
+        <button class="cat-btn" onclick="filterCategory('data', this)">📊 Data</button>
+        <button class="cat-btn" onclick="filterCategory('files', this)">📁 Files</button>
+        <button class="cat-btn" onclick="filterCategory('web', this)">🌐 Web</button>
+        <button class="cat-btn" onclick="filterCategory('automation', this)">⚙️ Automation</button>
+        <button class="cat-btn" onclick="filterCategory('gis', this)">🗺️ GIS/ArcGIS</button>
+        <button class="cat-btn" onclick="filterCategory('api', this)">🔌 API</button>
+        <button class="cat-btn" onclick="filterCategory('database', this)">🗄️ Database</button>
+      </div>
+
+      <!-- WINDOW BODY -->
+      <div class="window-body" id="windowBody" style="height: calc(90vh - 120px); overflow-y: auto;">
+
+        <!-- TAB CONTAINER -->
+        <div class="tab-container">
+          <div class="tab-bar" id="tabBar">
+            <button class="tab-btn active" onclick="showTab('install')">💾 Installation</button>
+            <button class="tab-btn" onclick="showTab('commands')">⌨️ Commands &amp; Syntax</button>
+            <button class="tab-btn" onclick="showTab('packages')">📦 Essential Packages</button>
+            <button class="tab-btn" onclick="showTab('workflows')">🔧 Example Workflows</button>
+          </div>
+
+          <div class="tab-content">
+
+            <!-- ============ INSTALL TAB ============ -->
+            <div class="tab-panel active" id="panel-install">
+              <div class="section-header"><span class="icon">💾</span> Python Installation Guide</div>
+
+              <div class="group-box">
+                <span class="group-box-title">Option A: Install Python from python.org (Recommended for General Use)</span>
+                <div class="step"><span class="step-num">1</span><span class="step-text">Go to <b>https://www.python.org/downloads/</b> and click the big yellow <b>"Download Python 3.x"</b> button.</span></div>
+                <div class="step"><span class="step-num">2</span><span class="step-text">Run the installer. <b style="color:red;">⚠️ CRITICAL: Check the box that says "Add python.exe to PATH"</b> at the bottom of the first screen. This is the #1 mistake people make!</span></div>
+                <div class="step"><span class="step-num">3</span><span class="step-text">Click <b>"Install Now"</b> (the default). It installs to your user folder.</span></div>
+                <div class="step"><span class="step-num">4</span><span class="step-text">When done, click <b>"Disable path length limit"</b> if it shows up, then <b>Close</b>.</span></div>
+                <div class="step"><span class="step-num">5</span><span class="step-text">Open <b>Command Prompt</b> (press Win+R → type <code>cmd</code> → Enter) and type: <code>python --version</code> — you should see the version number.</span></div>
+              </div>
+
+              <div class="group-box">
+                <span class="group-box-title">Option B: Install Anaconda/Miniconda (Recommended for Data Science & GIS)</span>
+                <div class="step"><span class="step-num">1</span><span class="step-text">Go to <b>https://www.anaconda.com/download</b> (Anaconda — big, includes everything) or <b>https://docs.conda.io/en/latest/miniconda.html</b> (Miniconda — minimal).</span></div>
+                <div class="step"><span class="step-num">2</span><span class="step-text">Download the <b>Windows 64-bit</b> installer and run it.</span></div>
+                <div class="step"><span class="step-num">3</span><span class="step-text">Accept defaults. Check <b>"Add to PATH"</b> if given the option (Anaconda may warn against it, but it's usually fine).</span></div>
+                <div class="step"><span class="step-num">4</span><span class="step-text">Open <b>Anaconda Prompt</b> from the Start Menu and type: <code>conda --version</code></span></div>
+                <div class="step"><span class="step-num">5</span><span class="step-text">Create environments: <code>conda create -n myproject python=3.11</code> then <code>conda activate myproject</code></span></div>
+              </div>
+
+              <div class="group-box">
+                <span class="group-box-title">Option C: Using Python in ArcGIS Pro</span>
+                <div class="step"><span class="step-num">1</span><span class="step-text">ArcGIS Pro comes with its own Python (via Conda). Open ArcGIS Pro → <b>Project</b> tab → <b>Python</b>.</span></div>
+                <div class="step"><span class="step-num">2</span><span class="step-text">The default environment is <b>arcgispro-py3</b>. You can <b>clone</b> it to install additional packages without breaking the default.</span></div>
+                <div class="step"><span class="step-num">3</span><span class="step-text">To open a Python console inside ArcGIS Pro: go to <b>Analysis</b> tab → <b>Python</b> → choose <b>Python Window</b> or <b>Python Notebook</b>.</span></div>
+                <div class="step"><span class="step-num">4</span><span class="step-text">To run .py scripts outside ArcGIS Pro, open <b>Python Command Prompt</b> from Start Menu (installed with ArcGIS) and run: <code>python my_script.py</code></span></div>
+                <div class="step"><span class="step-num">5</span><span class="step-text">Install extra packages in cloned environment: <code>conda install -n myenv pandas matplotlib</code> or <code>pip install package_name</code></span></div>
+              </div>
+
+              <div class="group-box">
+                <span class="group-box-title">How to Actually Open &amp; Run Python</span>
+                <div class="section-header"><span class="icon">🖥️</span> 5 Ways to Open Python</div>
+                <div class="step"><span class="step-num">1</span><span class="step-text"><b>Interactive Shell:</b> Open Command Prompt or PowerShell, type <code>python</code> and press Enter. You'll see <code>>>></code>. Type code line by line. Type <code>exit()</code> to leave.</span></div>
+                <div class="step"><span class="step-num">2</span><span class="step-text"><b>Run a .py Script:</b> Save your code in a file like <code>myscript.py</code>. In Command Prompt, navigate to the folder (<code>cd C:\myfiles</code>) and type <code>python myscript.py</code></span></div>
+                <div class="step"><span class="step-num">3</span><span class="step-text"><b>IDLE:</b> Search "IDLE" in Start Menu. It's a simple editor that comes with Python. Write code, press F5 to run.</span></div>
+                <div class="step"><span class="step-num">4</span><span class="step-text"><b>VS Code:</b> Download VS Code from <b>code.visualstudio.com</b>. Install the <b>Python extension</b>. Open a .py file → click the ▶️ play button.</span></div>
+                <div class="step"><span class="step-num">5</span><span class="step-text"><b>Jupyter Notebook:</b> Run <code>pip install notebook</code> then <code>jupyter notebook</code> in cmd. A browser window opens where you write code in cells.</span></div>
+              </div>
+
+              <div class="group-box">
+                <span class="group-box-title">Troubleshooting Common Install Problems</span>
+                <div class="card">
+                  <div class="card-desc"><b>"python is not recognized"</b> — Python is not on your PATH. Reinstall and check "Add to PATH", or manually add <code>C:\Users\YourName\AppData\Local\Programs\Python\Python3x\</code> to your system PATH.</div>
+                </div>
+                <div class="card">
+                  <div class="card-desc"><b>"pip is not recognized"</b> — Try <code>python -m pip install ...</code> instead, or add Python's Scripts folder to PATH.</div>
+                </div>
+                <div class="card">
+                  <div class="card-desc"><b>Multiple Python versions conflict</b> — Use <code>py -3.11</code> to pick a specific version (Windows Python Launcher). Use virtual environments!</div>
+                </div>
+                <div class="card">
+                  <div class="card-desc"><b>"Permission denied"</b> — Run cmd as Administrator, or use <code>pip install --user package_name</code>.</div>
+                </div>
+                <div class="card">
+                  <div class="card-desc"><b>ArcGIS Pro package conflicts</b> — Always clone the default environment before installing packages: <b>Project → Python → Manage Environments → Clone</b>.</div>
+                </div>
+              </div>
+
+              <div class="group-box">
+                <span class="group-box-title">Virtual Environments (Keep Projects Clean)</span>
+                <div class="card">
+                  <div class="card-desc" onclick="this.parentElement.querySelector('.card-code').classList.toggle('show')">Create isolated Python environments to avoid package conflicts:</div>
+                  <div class="card-code show"><pre># Create a virtual environment
+python -m venv myenv
+
+# Activate it (Windows)
+myenv\Scripts\activate
+
+# Activate it (Mac/Linux)
+source myenv/bin/activate
+
+# You'll see (myenv) in your prompt when active
+
+# Install packages (only for this project)
+pip install numpy pandas matplotlib
+
+# Show installed packages
+pip list
+
+# Deactivate when done
+deactivate
+
+# Delete environment (just delete the folder)
+rmdir /s myenv  # Windows
+rm -rf myenv    # Mac/Linux</pre></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ============ COMMANDS TAB ============ -->
+            <div class="tab-panel" id="panel-commands">
+              <div class="section-header"><span class="icon">⌨️</span> Python Commands &amp; Syntax Reference</div>
+              <div id="commandsList"></div>
+            </div>
+
+            <!-- ============ PACKAGES TAB ============ -->
+            <div class="tab-panel" id="panel-packages">
+              <div class="section-header"><span class="icon">📦</span> Essential Python Packages</div>
+              <div id="packagesList"></div>
+            </div>
+
+            <!-- ============ WORKFLOWS TAB ============ -->
+            <div class="tab-panel" id="panel-workflows">
+              <div class="section-header"><span class="icon">🔧</span> Example Workflows (Click title to expand code)</div>
+              <div id="workflowsList"></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- STATUS BAR -->
+      <div class="status-bar">
+        <span class="status-section" id="statusText">Ready</span>
+        <span class="status-section" style="max-width:120px;" id="statusCount">Items: 0</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TASKBAR -->
+<div class="taskbar">
+  <button class="start-btn" onclick="showAbout()">
+    <span class="start-logo">🪟</span> Start
+  </button>
+  <div class="taskbar-items">
+    <div class="taskbar-item active">🐍 Python Guide</div>
+  </div>
+  <div class="taskbar-clock" id="clock"></div>
+</div>
+
+<!-- ABOUT DIALOG -->
+<div class="dialog-overlay hidden" id="aboutDialog" onclick="closeAbout(event)">
+  <div class="dialog-window" onclick="event.stopPropagation()">
+    <div class="window-title">
+      <span class="window-title-text">About Python Reference Guide</span>
+      <div class="title-buttons">
+        <button class="title-btn" onclick="document.getElementById('aboutDialog').classList.add('hidden')">✕</button>
+      </div>
+    </div>
+    <div class="dialog-body">
+      <div style="font-size:36px;margin:8px 0;">🐍</div>
+      <p><b>Python Reference Guide</b></p>
+      <p>Windows 95 Edition — v3.12.0</p>
+      <p style="margin-top:12px;">A comprehensive searchable reference<br>for Python commands, packages, and workflows.</p>
+      <p style="margin-top:8px; color: var(--win-dark);">40+ example workflows included<br>Tags-based search system<br>ArcGIS Pro integration tips</p>
+      <p style="margin-top:12px; font-size:10px; color: var(--win-dark);">© 2026 — Made with ❤️ and nostalgia</p>
+    </div>
+    <div class="dialog-footer">
+      <button class="win-btn" onclick="document.getElementById('aboutDialog').classList.add('hidden')">OK</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+
+const COMMANDS = [
+  // --- BASICS ---
+  {title:"print()", desc:"Output text or values to the console.", code:`print("Hello, World!")
+print(f"The value is {x}")
+print("Name:", name, "Age:", age)
+print(value, end="")  # no newline
+print(*my_list, sep=", ")  # unpack list`, tags:["output","display","console","beginner","basics"], category:"beginner"},
+  {title:"Variables & Assignment", desc:"Store values in named references. Python is dynamically typed.", code:`x = 10
+name = "Alice"
+pi = 3.14159
+is_valid = True
+x, y, z = 1, 2, 3  # multiple assignment
+a = b = c = 0  # same value`, tags:["variable","assign","store","beginner","basics","types"], category:"beginner"},
+  {title:"Data Types", desc:"The core built-in types in Python.", code:`# Numeric
+x = 42          # int
+y = 3.14        # float
+z = 2 + 3j      # complex
+
+# Text
+s = "hello"     # str
+
+# Boolean
+b = True        # bool
+
+# Sequences
+lst = [1, 2, 3]          # list (mutable)
+tup = (1, 2, 3)          # tuple (immutable)
+rng = range(10)           # range
+
+# Mapping
+d = {"key": "value"}     # dict
+
+# Set
+st = {1, 2, 3}           # set
+
+# None
+n = None                 # NoneType
+
+# Check type
+type(x)          # <class 'int'>
+isinstance(x, int)  # True`, tags:["types","int","float","string","list","dict","tuple","set","beginner","basics"], category:"beginner"},
+  {title:"String Operations", desc:"Common string methods and formatting.", code:`s = "Hello, World!"
+
+s.upper()          # "HELLO, WORLD!"
+s.lower()          # "hello, world!"
+s.strip()          # remove whitespace
+s.split(",")       # ["Hello", " World!"]
+s.replace("o","0") # "Hell0, W0rld!"
+s.startswith("He") # True
+s.find("World")    # 7 (index)
+len(s)             # 13
+
+# f-strings (best way to format)
+name = "Alice"
+age = 30
+f"Name: {name}, Age: {age}"
+f"Pi is {3.14159:.2f}"    # "Pi is 3.14"
+f"{'centered':^20}"       # centered with padding
+
+# Join
+", ".join(["a","b","c"])  # "a, b, c"
+
+# Multiline
+text = """Line 1
+Line 2
+Line 3"""`, tags:["string","text","format","f-string","split","join","replace","beginner","basics"], category:"beginner"},
+  {title:"Lists", desc:"Ordered, mutable sequences.", code:`fruits = ["apple", "banana", "cherry"]
+
+fruits.append("date")       # add to end
+fruits.insert(1, "avocado") # insert at index
+fruits.remove("banana")     # remove by value
+fruits.pop()                # remove last
+fruits.pop(0)               # remove at index
+fruits.sort()               # sort in place
+fruits.reverse()            # reverse in place
+len(fruits)                 # length
+"apple" in fruits           # True
+
+# Slicing
+fruits[0]       # first
+fruits[-1]      # last
+fruits[1:3]     # index 1 to 2
+fruits[::2]     # every other
+
+# List comprehension
+squares = [x**2 for x in range(10)]
+evens = [x for x in range(20) if x % 2 == 0]`, tags:["list","array","append","sort","slice","comprehension","beginner","basics"], category:"beginner"},
+  {title:"Dictionaries", desc:"Key-value pair mappings.", code:`person = {"name": "Alice", "age": 30, "city": "NYC"}
+
+person["name"]              # "Alice"
+person.get("phone", "N/A") # "N/A" (default)
+person["email"] = "a@b.com" # add/update
+del person["city"]          # delete key
+person.keys()               # dict_keys
+person.values()             # dict_values
+person.items()              # key-value pairs
+
+# Looping
+for key, value in person.items():
+    print(f"{key}: {value}")
+
+# Dict comprehension
+squares = {x: x**2 for x in range(6)}
+
+# Merge (Python 3.9+)
+merged = dict1 | dict2
+
+# Nested
+data = {
+    "users": [
+        {"name": "Alice", "role": "admin"},
+        {"name": "Bob", "role": "user"}
+    ]
+}`, tags:["dict","dictionary","hashmap","key-value","mapping","beginner","basics"], category:"beginner"},
+  {title:"Control Flow (if/elif/else)", desc:"Conditional execution.", code:`x = 15
+
+if x > 20:
+    print("big")
+elif x > 10:
+    print("medium")
+else:
+    print("small")
+
+# Ternary / inline
+result = "even" if x % 2 == 0 else "odd"
+
+# Match statement (Python 3.10+)
+match command:
+    case "quit":
+        exit()
+    case "hello":
+        print("Hi!")
+    case _:
+        print("Unknown command")`, tags:["if","else","elif","condition","ternary","match","control","beginner","basics"], category:"beginner"},
+  {title:"Loops (for / while)", desc:"Iterate over sequences or repeat until condition.", code:`# For loop
+for i in range(5):
+    print(i)  # 0,1,2,3,4
+
+for item in ["a", "b", "c"]:
+    print(item)
+
+for i, val in enumerate(my_list):
+    print(f"Index {i}: {val}")
+
+for key, val in my_dict.items():
+    print(key, val)
+
+# While loop
+count = 0
+while count < 10:
+    count += 1
+
+# Break and continue
+for i in range(100):
+    if i == 5:
+        continue  # skip this iteration
+    if i == 10:
+        break     # exit loop
+
+# Zip (iterate multiple lists)
+for name, score in zip(names, scores):
+    print(f"{name}: {score}")`, tags:["for","while","loop","iterate","range","enumerate","zip","break","continue","beginner","basics"], category:"beginner"},
+  {title:"Functions", desc:"Reusable blocks of code.", code:`def greet(name, greeting="Hello"):
+    """Greet someone by name."""
+    return f"{greeting}, {name}!"
+
+result = greet("Alice")
+result = greet("Bob", greeting="Hey")
+
+# *args and **kwargs
+def flexible(*args, **kwargs):
+    print(args)    # tuple of positional args
+    print(kwargs)  # dict of keyword args
+
+flexible(1, 2, 3, name="Alice", age=30)
+
+# Lambda (anonymous function)
+square = lambda x: x ** 2
+sorted_list = sorted(data, key=lambda x: x["age"])
+
+# Type hints (optional but recommended)
+def add(a: int, b: int) -> int:
+    return a + b`, tags:["function","def","return","lambda","args","kwargs","beginner","basics"], category:"beginner"},
+  {title:"Error Handling (try/except)", desc:"Catch and handle errors gracefully.", code:`try:
+    result = 10 / 0
+except ZeroDivisionError:
+    print("Cannot divide by zero!")
+except (ValueError, TypeError) as e:
+    print(f"Error: {e}")
+except Exception as e:
+    print(f"Unexpected error: {e}")
+else:
+    print("No errors occurred")
+finally:
+    print("This always runs")
+
+# Raise your own errors
+def validate_age(age):
+    if age < 0:
+        raise ValueError("Age cannot be negative")
+    return age`, tags:["try","except","error","exception","raise","catch","beginner","basics","debugging"], category:"beginner"},
+  {title:"File I/O", desc:"Read and write files.", code:`# Read entire file
+with open("data.txt", "r") as f:
+    content = f.read()
+
+# Read line by line
+with open("data.txt", "r") as f:
+    for line in f:
+        print(line.strip())
+
+# Read all lines into list
+with open("data.txt") as f:
+    lines = f.readlines()
+
+# Write to file
+with open("output.txt", "w") as f:
+    f.write("Hello\\n")
+    f.write("World\\n")
+
+# Append to file
+with open("log.txt", "a") as f:
+    f.write("New entry\\n")
+
+# Read/write CSV
+import csv
+with open("data.csv", "r") as f:
+    reader = csv.DictReader(f)
+    for row in reader:
+        print(row)
+
+# JSON
+import json
+with open("data.json") as f:
+    data = json.load(f)
+
+with open("output.json", "w") as f:
+    json.dump(data, f, indent=2)`, tags:["file","read","write","open","csv","json","io","beginner","files"], category:"beginner"},
+  {title:"Classes & OOP", desc:"Object-oriented programming basics.", code:`class Dog:
+    species = "Canis familiaris"  # class attribute
+
+    def __init__(self, name, age):
+        self.name = name  # instance attribute
+        self.age = age
+
+    def bark(self):
+        return f"{self.name} says Woof!"
+
+    def __str__(self):
+        return f"{self.name} ({self.age} years)"
+
+    def __repr__(self):
+        return f"Dog('{self.name}', {self.age})"
+
+# Inheritance
+class Puppy(Dog):
+    def __init__(self, name, age, toy):
+        super().__init__(name, age)
+        self.toy = toy
+
+    def play(self):
+        return f"{self.name} plays with {self.toy}"
+
+rex = Dog("Rex", 5)
+print(rex.bark())
+pup = Puppy("Max", 1, "ball")
+print(pup.play())`, tags:["class","oop","object","inheritance","init","self","intermediate","basics"], category:"intermediate"},
+  {title:"List/Dict/Set Comprehensions", desc:"Compact syntax for creating collections.", code:`# List comprehension
+squares = [x**2 for x in range(10)]
+evens = [x for x in range(20) if x % 2 == 0]
+flat = [item for sublist in nested for item in sublist]
+
+# Dict comprehension
+word_lengths = {w: len(w) for w in words}
+filtered = {k: v for k, v in d.items() if v > 0}
+
+# Set comprehension
+unique_lengths = {len(w) for w in words}
+
+# Generator expression (memory efficient)
+total = sum(x**2 for x in range(1000000))
+
+# Nested comprehension
+matrix = [[i*j for j in range(5)] for i in range(5)]`, tags:["comprehension","list","dict","set","generator","intermediate","basics"], category:"intermediate"},
+  {title:"Decorators", desc:"Functions that modify other functions.", code:`import functools
+
+def timer(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        import time
+        start = time.time()
+        result = func(*args, **kwargs)
+        elapsed = time.time() - start
+        print(f"{func.__name__} took {elapsed:.2f}s")
+        return result
+    return wrapper
+
+@timer
+def slow_function():
+    import time
+    time.sleep(1)
+    return "done"
+
+# Decorator with arguments
+def repeat(n):
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            for _ in range(n):
+                result = func(*args, **kwargs)
+            return result
+        return wrapper
+    return decorator
+
+@repeat(3)
+def say_hello():
+    print("Hello!")`, tags:["decorator","wrapper","functools","intermediate","advanced"], category:"intermediate"},
+  {title:"Context Managers", desc:"Manage resources with 'with' statements.", code:`# Custom context manager using class
+class FileManager:
+    def __init__(self, filename, mode):
+        self.filename = filename
+        self.mode = mode
+
+    def __enter__(self):
+        self.file = open(self.filename, self.mode)
+        return self.file
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.file.close()
+
+# Using contextlib (simpler)
+from contextlib import contextmanager
+
+@contextmanager
+def timer():
+    import time
+    start = time.time()
+    yield
+    print(f"Elapsed: {time.time() - start:.2f}s")
+
+with timer():
+    # ... do work ...
+    pass`, tags:["context","manager","with","resource","intermediate","advanced"], category:"intermediate"},
+  {title:"Regular Expressions", desc:"Pattern matching in text.", code:`import re
+
+text = "Call me at 555-123-4567 or 555-987-6543"
+
+# Find all matches
+phones = re.findall(r'\\d{3}-\\d{3}-\\d{4}', text)
+
+# Search (first match)
+match = re.search(r'(\\d{3})-(\\d{3})-(\\d{4})', text)
+if match:
+    area_code = match.group(1)
+
+# Replace
+clean = re.sub(r'[^a-zA-Z0-9\\s]', '', text)
+
+# Split
+parts = re.split(r'[,;\\s]+', text)
+
+# Common patterns
+email = r'[\\w.+-]+@[\\w-]+\\.[\\w.]+'
+url = r'https?://[\\w./\\-?=&#]+'
+ip = r'\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}'`, tags:["regex","regular","expression","pattern","match","search","replace","intermediate","text"], category:"intermediate"},
+  {title:"Command Line / Terminal", desc:"Essential terminal commands for working with Python.", code:`# Check Python version
+python --version
+python3 --version
+
+# Run a script
+python my_script.py
+python -m module_name
+
+# Install packages
+pip install package_name
+pip install package_name==1.2.3   # specific version
+pip install -r requirements.txt    # from file
+pip install --upgrade package_name
+
+# List installed packages
+pip list
+pip freeze
+
+# Create virtual environment
+python -m venv env_name
+env_name\\Scripts\\activate        # Windows
+source env_name/bin/activate      # Mac/Linux
+deactivate
+
+# Conda commands
+conda create -n myenv python=3.11
+conda activate myenv
+conda install pandas numpy
+conda list
+conda env export > environment.yml`, tags:["terminal","cmd","command","pip","install","venv","conda","beginner","basics"], category:"beginner"},
+];
+
+const PACKAGES = [
+  {title:"pandas", desc:"Data analysis and manipulation. The backbone of data work in Python.", code:`import pandas as pd
+
+# Create DataFrame
+df = pd.DataFrame({"name": ["Alice","Bob"], "age": [30,25]})
+
+# Read data
+df = pd.read_csv("data.csv")
+df = pd.read_excel("data.xlsx")
+
+# Explore
+df.head()
+df.info()
+df.describe()
+df.shape
+df.columns
+
+# Select / Filter
+df["column_name"]
+df[["col1", "col2"]]
+df[df["age"] > 25]
+df.loc[0:5, "name":"age"]
+df.iloc[0, 1]
+df.query("age > 25 and city == 'NYC'")
+
+# Modify
+df["new_col"] = df["col1"] + df["col2"]
+df.rename(columns={"old":"new"})
+df.drop(columns=["col"])
+df.fillna(0)
+df.dropna()
+df.sort_values("age", ascending=False)
+
+# Group & Aggregate
+df.groupby("city")["sales"].sum()
+df.groupby("category").agg({"price":"mean","qty":"sum"})
+df.pivot_table(values="sales", index="region", columns="year")
+
+# Save
+df.to_csv("output.csv", index=False)
+df.to_excel("output.xlsx", index=False)`, tags:["data","dataframe","csv","excel","analysis","filter","group","pandas","beginner","data"], category:"data", install:"pip install pandas"},
+  {title:"numpy", desc:"Numerical computing and array operations.", code:`import numpy as np
+
+# Create arrays
+a = np.array([1, 2, 3, 4, 5])
+zeros = np.zeros((3, 4))
+ones = np.ones((2, 3))
+rng = np.arange(0, 10, 0.5)
+lin = np.linspace(0, 1, 100)
+
+# Operations
+a + 10
+a * 2
+np.mean(a)
+np.std(a)
+np.sum(a)
+np.max(a)
+np.min(a)
+
+# Matrix operations
+m = np.array([[1,2],[3,4]])
+m.T              # transpose
+np.dot(m, m)     # matrix multiply
+m @ m            # same thing
+np.linalg.inv(m) # inverse
+
+# Random
+np.random.rand(3, 3)     # uniform 0-1
+np.random.randn(100)     # normal distribution
+np.random.choice([1,2,3], size=10)
+
+# Reshaping
+a.reshape(5, 1)
+a.flatten()`, tags:["numpy","array","math","matrix","numerical","statistics","data","beginner"], category:"data", install:"pip install numpy"},
+  {title:"matplotlib", desc:"Plotting and data visualization.", code:`import matplotlib.pyplot as plt
+
+# Line plot
+plt.plot(x, y, label="Data")
+plt.xlabel("X axis")
+plt.ylabel("Y axis")
+plt.title("My Plot")
+plt.legend()
+plt.savefig("plot.png", dpi=150)
+plt.show()
+
+# Bar chart
+plt.bar(categories, values)
+plt.xticks(rotation=45)
+
+# Scatter plot
+plt.scatter(x, y, c=colors, s=sizes, alpha=0.5)
+
+# Histogram
+plt.hist(data, bins=30, edgecolor="black")
+
+# Subplots
+fig, axes = plt.subplots(2, 2, figsize=(10, 8))
+axes[0,0].plot(x, y)
+axes[0,0].set_title("Plot 1")
+
+# Styling
+plt.style.use("ggplot")
+plt.figure(figsize=(12, 6))`, tags:["plot","chart","graph","visualize","matplotlib","figure","data","beginner"], category:"data", install:"pip install matplotlib"},
+  {title:"requests", desc:"HTTP requests — talk to APIs and download web content.", code:`import requests
+
+# GET request
+response = requests.get("https://api.example.com/data")
+data = response.json()
+status = response.status_code  # 200 = OK
+
+# With parameters
+params = {"q": "python", "page": 1}
+response = requests.get(url, params=params)
+
+# POST request
+payload = {"name": "Alice", "email": "a@b.com"}
+response = requests.post(url, json=payload)
+
+# Headers / Auth
+headers = {"Authorization": "Bearer TOKEN123"}
+response = requests.get(url, headers=headers)
+
+# Download file
+r = requests.get(file_url, stream=True)
+with open("download.zip", "wb") as f:
+    for chunk in r.iter_content(chunk_size=8192):
+        f.write(chunk)
+
+# Session (reuse connections)
+session = requests.Session()
+session.headers.update({"Authorization": "Bearer TOKEN"})
+response = session.get(url)`, tags:["http","api","get","post","download","web","requests","beginner","api","web"], category:"web", install:"pip install requests"},
+  {title:"os / pathlib", desc:"File system operations and path management.", code:`import os
+from pathlib import Path
+
+# Current directory
+os.getcwd()
+Path.cwd()
+
+# List files
+os.listdir(".")
+list(Path(".").glob("*.csv"))
+list(Path(".").rglob("*.py"))  # recursive
+
+# Path operations
+p = Path("data/reports/file.csv")
+p.name       # "file.csv"
+p.stem       # "file"
+p.suffix     # ".csv"
+p.parent     # Path("data/reports")
+p.exists()   # True/False
+p.is_file()  # True/False
+p.is_dir()   # True/False
+
+# Create directories
+os.makedirs("output/reports", exist_ok=True)
+Path("output/reports").mkdir(parents=True, exist_ok=True)
+
+# Rename / Move
+os.rename("old.txt", "new.txt")
+Path("old.txt").rename("new.txt")
+
+# Delete
+os.remove("file.txt")
+import shutil
+shutil.rmtree("folder")  # delete folder
+
+# Walk directory tree
+for root, dirs, files in os.walk("project"):
+    for f in files:
+        full_path = os.path.join(root, f)`, tags:["file","path","directory","folder","os","pathlib","filesystem","beginner","files"], category:"files", install:"Built-in (no install)"},
+  {title:"openpyxl", desc:"Read/write Excel files (.xlsx) with formatting.", code:`from openpyxl import Workbook, load_workbook
+
+# Create new workbook
+wb = Workbook()
+ws = wb.active
+ws.title = "Sheet1"
+
+# Write data
+ws["A1"] = "Name"
+ws["B1"] = "Score"
+ws.append(["Alice", 95])
+ws.append(["Bob", 87])
+
+# Save
+wb.save("output.xlsx")
+
+# Read existing file
+wb = load_workbook("data.xlsx")
+ws = wb["Sheet1"]
+for row in ws.iter_rows(min_row=2, values_only=True):
+    print(row)
+
+# Access cell
+value = ws.cell(row=1, column=1).value
+
+# Styling
+from openpyxl.styles import Font, PatternFill
+ws["A1"].font = Font(bold=True, size=14)
+ws["A1"].fill = PatternFill("solid", fgColor="FFFF00")`, tags:["excel","xlsx","spreadsheet","openpyxl","workbook","files","data"], category:"files", install:"pip install openpyxl"},
+  {title:"arcpy", desc:"ArcGIS Pro Python library for geospatial analysis.", code:`import arcpy
+
+# Set workspace
+arcpy.env.workspace = r"C:\\GIS\\data.gdb"
+arcpy.env.overwriteOutput = True
+
+# List feature classes
+fcs = arcpy.ListFeatureClasses()
+
+# Describe data
+desc = arcpy.Describe("my_layer")
+print(desc.shapeType)
+print(desc.spatialReference.name)
+
+# Geoprocessing tools
+arcpy.analysis.Buffer("roads", "roads_buffer", "100 Meters")
+arcpy.analysis.Clip("parcels", "study_area", "parcels_clipped")
+arcpy.analysis.Intersect(["layer1","layer2"], "intersect_output")
+arcpy.management.Dissolve("parcels", "dissolved", "ZONE")
+
+# Cursors (read/write data)
+with arcpy.da.SearchCursor("parcels", ["PARCEL_ID","AREA"]) as cursor:
+    for row in cursor:
+        print(f"ID: {row[0]}, Area: {row[1]}")
+
+# Update cursor
+with arcpy.da.UpdateCursor("parcels", ["STATUS"]) as cursor:
+    for row in cursor:
+        row[0] = "REVIEWED"
+        cursor.updateRow(row)
+
+# Insert cursor
+with arcpy.da.InsertCursor("points", ["SHAPE@XY","NAME"]) as cursor:
+    cursor.insertRow([(x, y), "New Point"])
+
+# Add field
+arcpy.management.AddField("table", "NEW_FIELD", "TEXT", field_length=50)
+
+# Select by attribute
+arcpy.management.SelectLayerByAttribute("layer", "NEW_SELECTION", "POP > 10000")`, tags:["arcgis","arcpy","gis","geospatial","buffer","clip","cursor","spatial","gis"], category:"gis", install:"Included with ArcGIS Pro"},
+  {title:"arcgis (ArcGIS API for Python)", desc:"Web GIS, mapping, and spatial analysis via ArcGIS Online/Enterprise.", code:`from arcgis.gis import GIS
+from arcgis.features import FeatureLayer
+
+# Connect
+gis = GIS("home")  # if logged in via ArcGIS Pro
+gis = GIS("https://www.arcgis.com", "username", "password")
+
+# Search for content
+results = gis.content.search("owner:myuser", item_type="Feature Layer")
+
+# Access feature layer
+fl = FeatureLayer("https://services.arcgis.com/.../FeatureServer/0")
+df = fl.query(where="POP > 5000").sdf  # Spatially-enabled DataFrame
+
+# Create a map
+m = gis.map("Chicago, IL")
+m.add_layer(fl)
+
+# Upload data
+item = gis.content.add({"title": "My Data"}, data="data.csv")
+published = item.publish()`, tags:["arcgis","api","webgis","mapping","spatial","online","gis"], category:"gis", install:"pip install arcgis"},
+  {title:"geopandas", desc:"Pandas for geospatial data (shapefiles, GeoJSON).", code:`import geopandas as gpd
+
+# Read spatial data
+gdf = gpd.read_file("data.shp")
+gdf = gpd.read_file("data.geojson")
+gdf = gpd.read_file("data.gdb", layer="my_layer")
+
+# Explore
+gdf.head()
+gdf.plot()
+gdf.crs          # coordinate reference system
+gdf.total_bounds  # extent
+
+# Reproject
+gdf = gdf.to_crs(epsg=4326)
+
+# Spatial operations
+gdf.buffer(100)
+gdf.centroid
+gpd.overlay(gdf1, gdf2, how="intersection")
+joined = gpd.sjoin(points, polygons, how="inner", predicate="within")
+
+# Save
+gdf.to_file("output.shp")
+gdf.to_file("output.geojson", driver="GeoJSON")`, tags:["geopandas","gis","shapefile","geojson","spatial","geometry","data","gis"], category:"gis", install:"pip install geopandas"},
+  {title:"selenium", desc:"Browser automation and web scraping.", code:`from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+
+driver = webdriver.Chrome()
+driver.get("https://www.example.com")
+
+# Find elements
+elem = driver.find_element(By.ID, "search")
+elem = driver.find_element(By.CSS_SELECTOR, ".class-name")
+elems = driver.find_elements(By.TAG_NAME, "a")
+
+# Interact
+elem.send_keys("search term")
+elem.send_keys(Keys.ENTER)
+elem.click()
+
+# Wait for element
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+elem = WebDriverWait(driver, 10).until(
+    EC.presence_of_element_located((By.ID, "result"))
+)
+
+# Get data
+text = elem.text
+html = driver.page_source
+
+driver.quit()`, tags:["selenium","browser","automation","scraping","web","testing","web","automation"], category:"web", install:"pip install selenium"},
+  {title:"BeautifulSoup", desc:"Parse HTML and XML for web scraping.", code:`from bs4 import BeautifulSoup
+import requests
+
+html = requests.get("https://example.com").text
+soup = BeautifulSoup(html, "html.parser")
+
+# Find elements
+title = soup.find("h1").text
+links = soup.find_all("a")
+div = soup.find("div", class_="content")
+item = soup.select_one("#main .article")
+
+# Extract data
+for link in links:
+    url = link.get("href")
+    text = link.text
+
+# Navigate
+soup.find("table").find_all("tr")`, tags:["beautifulsoup","bs4","html","parse","scrape","web","web"], category:"web", install:"pip install beautifulsoup4"},
+  {title:"SQLAlchemy / sqlite3", desc:"Database access — SQL from Python.", code:`# sqlite3 (built-in)
+import sqlite3
+
+conn = sqlite3.connect("mydata.db")
+cursor = conn.cursor()
+cursor.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT)")
+cursor.execute("INSERT INTO users (name) VALUES (?)", ("Alice",))
+conn.commit()
+results = cursor.execute("SELECT * FROM users").fetchall()
+conn.close()
+
+# SQLAlchemy (ORM)
+from sqlalchemy import create_engine, text
+engine = create_engine("sqlite:///mydata.db")
+
+with engine.connect() as conn:
+    result = conn.execute(text("SELECT * FROM users"))
+    for row in result:
+        print(row)
+
+# With pandas
+import pandas as pd
+df = pd.read_sql("SELECT * FROM sales", engine)
+df.to_sql("new_table", engine, if_exists="replace", index=False)`, tags:["sql","database","sqlite","sqlalchemy","query","db","database","data"], category:"database", install:"pip install sqlalchemy"},
+  {title:"schedule / datetime", desc:"Schedule tasks and work with dates/times.", code:`from datetime import datetime, timedelta
+import time
+
+# Current date/time
+now = datetime.now()
+today = datetime.today().date()
+
+# Format / parse
+now.strftime("%Y-%m-%d %H:%M:%S")
+dt = datetime.strptime("2025-01-15", "%Y-%m-%d")
+
+# Arithmetic
+tomorrow = today + timedelta(days=1)
+diff = datetime(2025,12,31) - datetime.now()
+print(f"{diff.days} days left")
+
+# Schedule tasks
+import schedule
+
+def job():
+    print("Running task...")
+
+schedule.every(10).minutes.do(job)
+schedule.every().day.at("09:00").do(job)
+schedule.every().monday.do(job)
+
+while True:
+    schedule.run_pending()
+    time.sleep(1)`, tags:["datetime","date","time","schedule","cron","timer","automation","automation"], category:"automation", install:"pip install schedule"},
+  {title:"logging", desc:"Professional logging instead of print statements.", code:`import logging
+
+# Basic setup
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    handlers=[
+        logging.FileHandler("app.log"),
+        logging.StreamHandler()
+    ]
+)
+
+logger = logging.getLogger(__name__)
+
+logger.debug("Debugging info")
+logger.info("General info")
+logger.warning("Warning!")
+logger.error("Error occurred")
+logger.critical("Critical failure!")
+
+# With exception info
+try:
+    result = 10 / 0
+except Exception:
+    logger.exception("Division failed")`, tags:["logging","log","debug","error","monitoring","beginner","automation"], category:"automation", install:"Built-in (no install)"},
+  {title:"flask", desc:"Lightweight web framework for building APIs and web apps.", code:`from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+@app.route("/")
+def home():
+    return "<h1>Hello World</h1>"
+
+@app.route("/api/data", methods=["GET"])
+def get_data():
+    return jsonify({"message": "success", "data": [1,2,3]})
+
+@app.route("/api/data", methods=["POST"])
+def post_data():
+    data = request.json
+    return jsonify({"received": data}), 201
+
+if __name__ == "__main__":
+    app.run(debug=True, port=5000)`, tags:["flask","web","api","server","http","route","web","api"], category:"web", install:"pip install flask"},
+  {title:"scikit-learn", desc:"Machine learning: classification, regression, clustering.", code:`from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, classification_report
+import pandas as pd
+
+# Load and split data
+df = pd.read_csv("data.csv")
+X = df.drop("target", axis=1)
+y = df["target"]
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+
+# Train model
+model = RandomForestClassifier(n_estimators=100)
+model.fit(X_train, y_train)
+
+# Predict and evaluate
+predictions = model.predict(X_test)
+print(accuracy_score(y_test, predictions))
+print(classification_report(y_test, predictions))
+
+# Feature importance
+importances = model.feature_importances_`, tags:["sklearn","machine learning","ml","classification","model","data","intermediate"], category:"data", install:"pip install scikit-learn"},
+  {title:"Pillow (PIL)", desc:"Image processing and manipulation.", code:`from PIL import Image, ImageDraw, ImageFont
+
+# Open and inspect
+img = Image.open("photo.jpg")
+print(img.size)    # (width, height)
+print(img.format)  # JPEG
+
+# Resize
+img = img.resize((800, 600))
+img.thumbnail((200, 200))  # keeps aspect ratio
+
+# Crop
+cropped = img.crop((left, top, right, bottom))
+
+# Rotate / flip
+img = img.rotate(90)
+img = img.transpose(Image.FLIP_LEFT_RIGHT)
+
+# Convert
+gray = img.convert("L")  # grayscale
+
+# Draw
+draw = ImageDraw.Draw(img)
+draw.text((10, 10), "Hello", fill="red")
+draw.rectangle([10, 10, 100, 100], outline="blue")
+
+# Save
+img.save("output.png")
+img.save("output.jpg", quality=85)`, tags:["image","pillow","pil","photo","resize","crop","processing","files","automation"], category:"files", install:"pip install Pillow"},
+  {title:"subprocess", desc:"Run external commands and programs from Python.", code:`import subprocess
+
+# Simple command
+result = subprocess.run(["ls", "-la"], capture_output=True, text=True)
+print(result.stdout)
+print(result.returncode)  # 0 = success
+
+# Shell command (Windows)
+result = subprocess.run("dir /b", shell=True, capture_output=True, text=True)
+
+# With error handling
+try:
+    result = subprocess.run(
+        ["python", "script.py"],
+        capture_output=True, text=True,
+        timeout=30, check=True
+    )
+except subprocess.CalledProcessError as e:
+        print(f"Error: {e.stderr}")
+except subprocess.TimeoutExpired:
+    print("Timed out!")`, tags:["subprocess","shell","command","execute","system","process","automation"], category:"automation", install:"Built-in (no install)"},
+  {title:"dotenv / config", desc:"Manage environment variables and configuration.", code:`# .env file:
+# API_KEY=abc123
+# DB_HOST=localhost
+# DEBUG=true
+
+from dotenv import load_dotenv
+import os
+
+load_dotenv()  # reads .env file
+
+api_key = os.getenv("API_KEY")
+db_host = os.getenv("DB_HOST", "localhost")  # with default
+debug = os.getenv("DEBUG", "false").lower() == "true"
+
+# configparser for .ini files
+import configparser
+config = configparser.ConfigParser()
+config.read("config.ini")
+value = config["section"]["key"]`, tags:["env","environment","config","settings","dotenv","secrets","api","beginner"], category:"api", install:"pip install python-dotenv"},
+];
+
+const WORKFLOWS = [
+  // ---- BEGINNER ----
+  {title:"1. Read a CSV and Print Summary Stats", desc:"Open a CSV file and get quick statistics.", code:`import pandas as pd
+
+df = pd.read_csv("sales_data.csv")
+print("Shape:", df.shape)
+print("Columns:", df.columns.tolist())
+print("\\nFirst 5 rows:")
+print(df.head())
+print("\\nBasic stats:")
+print(df.describe())
+print("\\nMissing values:")
+print(df.isnull().sum())`, tags:["csv","pandas","statistics","summary","data","beginner","data"], category:"data"},
+  {title:"2. Filter & Sort Data in a DataFrame", desc:"Select rows matching conditions and sort results.", code:`import pandas as pd
+
+df = pd.read_csv("employees.csv")
+
+# Filter: employees over 30 in Sales department
+filtered = df[(df["age"] > 30) & (df["department"] == "Sales")]
+
+# Sort by salary descending
+sorted_df = filtered.sort_values("salary", ascending=False)
+
+# Top 10
+top10 = sorted_df.head(10)
+print(top10[["name","salary","department"]])
+
+# Save result
+top10.to_csv("top_sales_employees.csv", index=False)`, tags:["filter","sort","pandas","dataframe","query","data","beginner","data"], category:"data"},
+  {title:"3. Create a Bar Chart from Data", desc:"Visualize category counts with matplotlib.", code:`import pandas as pd
+import matplotlib.pyplot as plt
+
+df = pd.read_csv("survey.csv")
+counts = df["favorite_color"].value_counts()
+
+plt.figure(figsize=(10, 6))
+counts.plot(kind="bar", color="steelblue", edgecolor="black")
+plt.title("Favorite Colors Survey Results")
+plt.xlabel("Color")
+plt.ylabel("Count")
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.savefig("color_chart.png", dpi=150)
+plt.show()`, tags:["chart","bar","plot","matplotlib","visualize","data","beginner","data"], category:"data"},
+  {title:"4. Rename & Clean Column Names", desc:"Standardize messy column names in a DataFrame.", code:`import pandas as pd
+
+df = pd.read_csv("messy_data.csv")
+
+# Standardize: lowercase, replace spaces with underscores
+df.columns = df.columns.str.strip().str.lower().str.replace(" ", "_")
+df.columns = df.columns.str.replace(r'[^a-z0-9_]', '', regex=True)
+
+# Rename specific columns
+df = df.rename(columns={
+    "emp_id": "employee_id",
+    "dept": "department"
+})
+
+print(df.columns.tolist())
+df.to_csv("clean_data.csv", index=False)`, tags:["rename","clean","columns","pandas","wrangle","data","beginner","data"], category:"data"},
+  {title:"5. Merge Two CSV Files on a Common Column", desc:"Join two datasets together like a database join.", code:`import pandas as pd
+
+orders = pd.read_csv("orders.csv")
+customers = pd.read_csv("customers.csv")
+
+# Inner join on customer_id
+merged = pd.merge(orders, customers, on="customer_id", how="inner")
+
+# Left join (keep all orders)
+merged_left = pd.merge(orders, customers, on="customer_id", how="left")
+
+print(f"Orders: {len(orders)}, Customers: {len(customers)}, Merged: {len(merged)}")
+merged.to_csv("orders_with_customers.csv", index=False)`, tags:["merge","join","combine","csv","pandas","data","beginner","data"], category:"data"},
+  {title:"6. Batch Rename Files in a Folder", desc:"Rename all files in a directory following a pattern.", code:`from pathlib import Path
+
+folder = Path("raw_photos")
+for i, file in enumerate(sorted(folder.glob("*.jpg")), start=1):
+    new_name = f"vacation_2025_{i:04d}{file.suffix}"
+    file.rename(folder / new_name)
+    print(f"Renamed: {file.name} -> {new_name}")`, tags:["rename","batch","files","pathlib","automate","beginner","files","automation"], category:"files"},
+  {title:"7. Download a File from the Internet", desc:"Fetch a file via URL and save it locally.", code:`import requests
+
+url = "https://example.com/data/report.pdf"
+response = requests.get(url, stream=True)
+response.raise_for_status()
+
+with open("report.pdf", "wb") as f:
+    for chunk in response.iter_content(chunk_size=8192):
+        f.write(chunk)
+
+print("Downloaded successfully!")`, tags:["download","http","requests","file","web","beginner","web","files"], category:"web"},
+  {title:"8. Read & Write JSON Files", desc:"Load, modify, and save JSON data.", code:`import json
+
+# Read
+with open("config.json") as f:
+    config = json.load(f)
+
+print(config["database"]["host"])
+
+# Modify
+config["database"]["port"] = 5433
+config["updated"] = "2025-06-01"
+
+# Write
+with open("config_updated.json", "w") as f:
+    json.dump(config, f, indent=2)
+
+# Convert Python object to JSON string
+json_str = json.dumps({"key": "value"}, indent=2)`, tags:["json","read","write","file","config","parse","beginner","files"], category:"files"},
+  {title:"9. Simple API Call (GET)", desc:"Fetch data from a REST API.", code:`import requests
+
+response = requests.get("https://api.github.com/users/octocat")
+response.raise_for_status()
+
+user = response.json()
+print(f"Name: {user['name']}")
+print(f"Repos: {user['public_repos']}")
+print(f"Followers: {user['followers']}")
+
+# With query parameters
+params = {"q": "python", "sort": "stars", "per_page": 5}
+response = requests.get("https://api.github.com/search/repositories", params=params)
+data = response.json()
+for repo in data["items"]:
+    print(f"{repo['name']}: ★ {repo['stargazers_count']}")`, tags:["api","get","requests","rest","json","http","beginner","api","web"], category:"api"},
+  {title:"10. Find & Replace Text in Multiple Files", desc:"Search and replace a string across many files.", code:`from pathlib import Path
+
+folder = Path("project/docs")
+old_text = "CompanyOldName"
+new_text = "CompanyNewName"
+count = 0
+
+for file in folder.rglob("*.txt"):
+    content = file.read_text(encoding="utf-8")
+    if old_text in content:
+        updated = content.replace(old_text, new_text)
+        file.write_text(updated, encoding="utf-8")
+        count += 1
+        print(f"Updated: {file}")
+
+print(f"\\nModified {count} files")`, tags:["find","replace","text","batch","files","search","beginner","files","automation"], category:"files"},
+  // ---- INTERMEDIATE ----
+  {title:"11. Pivot Table and Grouped Summary Report", desc:"Create pivot tables and multi-level aggregations.", code:`import pandas as pd
+
+df = pd.read_csv("sales.csv")
+
+# Pivot table
+pivot = pd.pivot_table(
+    df,
+    values="revenue",
+    index="region",
+    columns="quarter",
+    aggfunc="sum",
+    fill_value=0,
+    margins=True  # adds totals
+)
+
+# Multi-level groupby
+summary = df.groupby(["region", "product"]).agg(
+    total_revenue=("revenue", "sum"),
+    avg_order=("revenue", "mean"),
+    order_count=("order_id", "count")
+).reset_index()
+
+summary = summary.sort_values("total_revenue", ascending=False)
+print(pivot)
+summary.to_excel("sales_summary.xlsx", index=False)`, tags:["pivot","group","aggregate","summary","report","pandas","intermediate","data"], category:"data"},
+  {title:"12. Multi-Plot Dashboard with Matplotlib", desc:"Create a figure with multiple subplots.", code:`import pandas as pd
+import matplotlib.pyplot as plt
+
+df = pd.read_csv("quarterly_data.csv")
+
+fig, axes = plt.subplots(2, 2, figsize=(14, 10))
+fig.suptitle("Q4 Dashboard", fontsize=16, fontweight="bold")
+
+# Plot 1: Line chart
+axes[0,0].plot(df["month"], df["revenue"], marker="o", color="blue")
+axes[0,0].set_title("Monthly Revenue")
+axes[0,0].set_ylabel("$")
+
+# Plot 2: Bar chart
+axes[0,1].bar(df["category"], df["units"], color="green")
+axes[0,1].set_title("Units by Category")
+axes[0,1].tick_params(axis="x", rotation=45)
+
+# Plot 3: Pie chart
+axes[1,0].pie(df.groupby("region")["revenue"].sum(),
+    labels=df["region"].unique(), autopct="%1.1f%%")
+axes[1,0].set_title("Revenue by Region")
+
+# Plot 4: Scatter
+axes[1,1].scatter(df["ad_spend"], df["revenue"], alpha=0.6)
+axes[1,1].set_title("Ad Spend vs Revenue")
+axes[1,1].set_xlabel("Ad Spend ($)")
+
+plt.tight_layout()
+plt.savefig("dashboard.png", dpi=200)
+plt.show()`, tags:["subplot","dashboard","matplotlib","chart","plot","multiple","intermediate","data"], category:"data"},
+  {title:"13. Web Scraping with BeautifulSoup", desc:"Extract structured data from web pages.", code:`import requests
+from bs4 import BeautifulSoup
+import csv
+
+url = "https://example.com/products"
+html = requests.get(url).text
+soup = BeautifulSoup(html, "html.parser")
+
+products = []
+for card in soup.select(".product-card"):
+    name = card.select_one(".name").text.strip()
+    price = card.select_one(".price").text.strip()
+    rating = card.select_one(".rating").text.strip()
+    products.append({"name": name, "price": price, "rating": rating})
+
+# Save to CSV
+with open("products.csv", "w", newline="") as f:
+    writer = csv.DictWriter(f, fieldnames=["name","price","rating"])
+    writer.writeheader()
+    writer.writerows(products)
+
+print(f"Scraped {len(products)} products")`, tags:["scrape","beautifulsoup","html","parse","extract","web","intermediate","web"], category:"web"},
+  {title:"14. Send an Email with Python", desc:"Send automated emails using smtplib.", code:`import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
+sender = "you@gmail.com"
+password = "your_app_password"  # Use App Password, not regular password
+receiver = "them@example.com"
+
+msg = MIMEMultipart()
+msg["From"] = sender
+msg["To"] = receiver
+msg["Subject"] = "Automated Report"
+
+body = \"\"\"Hi Team,
+
+Please find the weekly report attached.
+
+Best regards,
+Python Script\"\"\"
+
+msg.attach(MIMEText(body, "plain"))
+
+# Attach file
+from email.mime.application import MIMEApplication
+with open("report.pdf", "rb") as f:
+    attachment = MIMEApplication(f.read(), _subtype="pdf")
+    attachment.add_header("Content-Disposition", "attachment", filename="report.pdf")
+    msg.attach(attachment)
+
+with smtplib.SMTP("smtp.gmail.com", 587) as server:
+    server.starttls()
+    server.login(sender, password)
+    server.send_message(msg)
+    print("Email sent!")`, tags:["email","smtp","send","automate","notification","intermediate","automation"], category:"automation"},
+  {title:"15. Excel Report with Formatting (openpyxl)", desc:"Generate a styled Excel report with headers, colors, and formulas.", code:`from openpyxl import Workbook
+from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+from openpyxl.chart import BarChart, Reference
+
+wb = Workbook()
+ws = wb.active
+ws.title = "Sales Report"
+
+# Header style
+header_font = Font(bold=True, color="FFFFFF", size=12)
+header_fill = PatternFill("solid", fgColor="336699")
+
+# Headers
+headers = ["Region", "Q1", "Q2", "Q3", "Q4", "Total"]
+for col, header in enumerate(headers, 1):
+    cell = ws.cell(row=1, column=col, value=header)
+    cell.font = header_font
+    cell.fill = header_fill
+    cell.alignment = Alignment(horizontal="center")
+
+# Data
+data = [
+    ["North", 15000, 18000, 22000, 19000],
+    ["South", 12000, 14000, 16000, 21000],
+    ["East",  18000, 20000, 19000, 23000],
+    ["West",  11000, 13000, 17000, 20000],
+]
+for r, row in enumerate(data, 2):
+    for c, val in enumerate(row, 1):
+        ws.cell(row=r, column=c, value=val)
+    # Total formula
+    ws.cell(row=r, column=6, value=f"=SUM(B{r}:E{r})")
+
+# Column widths
+ws.column_dimensions["A"].width = 15
+for col in "BCDEF":
+    ws.column_dimensions[col].width = 12
+
+# Add chart
+chart = BarChart()
+chart.title = "Quarterly Sales"
+data_ref = Reference(ws, min_col=2, min_row=1, max_col=5, max_row=5)
+cats = Reference(ws, min_col=1, min_row=2, max_row=5)
+chart.add_data(data_ref, titles_from_data=True)
+chart.set_categories(cats)
+ws.add_chart(chart, "A8")
+
+wb.save("sales_report.xlsx")
+print("Report created!")`, tags:["excel","openpyxl","report","format","chart","styled","intermediate","files","data"], category:"files"},
+  {title:"16. Database CRUD with SQLite", desc:"Create, Read, Update, Delete operations on a local database.", code:`import sqlite3
+
+conn = sqlite3.connect("app.db")
+c = conn.cursor()
+
+# Create table
+c.execute("""
+    CREATE TABLE IF NOT EXISTS tasks (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        status TEXT DEFAULT 'pending',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+""")
+
+# Create (Insert)
+c.execute("INSERT INTO tasks (title) VALUES (?)", ("Learn Python",))
+c.execute("INSERT INTO tasks (title, status) VALUES (?, ?)", ("Build app", "in_progress"))
+
+# Read
+c.execute("SELECT * FROM tasks WHERE status = ?", ("pending",))
+rows = c.fetchall()
+for row in rows:
+    print(f"[{row[0]}] {row[1]} - {row[2]}")
+
+# Update
+c.execute("UPDATE tasks SET status = ? WHERE id = ?", ("done", 1))
+
+# Delete
+c.execute("DELETE FROM tasks WHERE id = ?", (2,))
+
+conn.commit()
+conn.close()`, tags:["sqlite","database","crud","sql","create","read","update","delete","intermediate","database"], category:"database"},
+  {title:"17. REST API Server with Flask", desc:"Build a simple JSON API.", code:`from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+# In-memory data store
+items = [
+    {"id": 1, "name": "Widget", "price": 9.99},
+    {"id": 2, "name": "Gadget", "price": 24.99},
+]
+
+@app.route("/api/items", methods=["GET"])
+def get_items():
+    return jsonify(items)
+
+@app.route("/api/items/<int:item_id>", methods=["GET"])
+def get_item(item_id):
+    item = next((i for i in items if i["id"] == item_id), None)
+    if item is None:
+        return jsonify({"error": "Not found"}), 404
+    return jsonify(item)
+
+@app.route("/api/items", methods=["POST"])
+def create_item():
+    data = request.json
+    new_item = {
+        "id": max(i["id"] for i in items) + 1,
+        "name": data["name"],
+        "price": data["price"]
+    }
+    items.append(new_item)
+    return jsonify(new_item), 201
+
+if __name__ == "__main__":
+    app.run(debug=True)`, tags:["flask","api","rest","server","crud","http","endpoint","intermediate","api","web"], category:"api"},
+  {title:"18. Log File Parser & Analyzer", desc:"Read log files, extract patterns, generate report.", code:`import re
+from collections import Counter
+from datetime import datetime
+
+log_pattern = re.compile(
+    r'(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}) \\[(\\w+)\\] (.+)'
+)
+
+errors = []
+levels = Counter()
+
+with open("application.log") as f:
+    for line in f:
+        match = log_pattern.match(line)
+        if match:
+            timestamp, level, message = match.groups()
+            levels[level] += 1
+            if level == "ERROR":
+                errors.append({
+                    "time": timestamp,
+                    "message": message
+                })
+
+print("Log Level Summary:")
+for level, count in levels.most_common():
+    print(f"  {level}: {count}")
+
+print(f"\\nRecent Errors ({len(errors)} total):")
+for err in errors[-5:]:
+    print(f"  [{err['time']}] {err['message']}")`, tags:["log","parse","regex","analyze","monitor","text","intermediate","automation","files"], category:"automation"},
+  {title:"19. ArcGIS: Buffer & Clip Workflow", desc:"Standard GIS workflow — buffer features then clip to study area.", code:`import arcpy
+
+arcpy.env.workspace = r"C:\\GIS\\Project.gdb"
+arcpy.env.overwriteOutput = True
+
+# Input data
+roads = "Major_Roads"
+study_area = "Study_Area_Boundary"
+
+# Step 1: Buffer roads by 500 meters
+print("Buffering roads...")
+arcpy.analysis.Buffer(roads, "Roads_Buffer_500m", "500 Meters",
+                      "FULL", "ROUND", "ALL")
+
+# Step 2: Clip buffer to study area
+print("Clipping to study area...")
+arcpy.analysis.Clip("Roads_Buffer_500m", study_area, "Roads_Buffer_Clipped")
+
+# Step 3: Calculate area
+arcpy.management.AddField("Roads_Buffer_Clipped", "Area_SqKm", "DOUBLE")
+arcpy.management.CalculateField(
+    "Roads_Buffer_Clipped", "Area_SqKm",
+    "!SHAPE.area@SQUAREKILOMETERS!", "PYTHON3"
+)
+
+# Step 4: Summary
+with arcpy.da.SearchCursor("Roads_Buffer_Clipped", ["OID@","Area_SqKm"]) as cur:
+    total = sum(row[1] for row in cur)
+print(f"Total buffered area: {total:.2f} sq km")
+print("Done!")`, tags:["arcgis","arcpy","buffer","clip","geoprocessing","spatial","gis","intermediate","gis"], category:"gis"},
+  {title:"20. ArcGIS: Batch Process Shapefiles", desc:"Loop through shapefiles in a folder and process each one.", code:`import arcpy
+import os
+
+arcpy.env.overwriteOutput = True
+input_folder = r"C:\\GIS\\Raw_Shapefiles"
+output_gdb = r"C:\\GIS\\Processed.gdb"
+
+# Create output GDB if needed
+if not arcpy.Exists(output_gdb):
+    arcpy.management.CreateFileGDB(os.path.dirname(output_gdb),
+                                    os.path.basename(output_gdb))
+
+# Process each shapefile
+arcpy.env.workspace = input_folder
+shapefiles = arcpy.ListFeatureClasses("*.shp")
+
+for shp in shapefiles:
+    name = os.path.splitext(shp)[0]
+    print(f"Processing: {shp}")
+
+    # Project to WGS 84
+    output_fc = os.path.join(output_gdb, f"{name}_projected")
+    sr = arcpy.SpatialReference(4326)  # WGS 84
+    arcpy.management.Project(shp, output_fc, sr)
+
+    # Add standard fields
+    arcpy.management.AddField(output_fc, "ProcessDate", "DATE")
+    arcpy.management.CalculateField(
+        output_fc, "ProcessDate",
+        "datetime.datetime.now()", "PYTHON3"
+    )
+
+print(f"Processed {len(shapefiles)} shapefiles")`, tags:["arcgis","arcpy","batch","shapefile","project","loop","gis","intermediate","gis","automation"], category:"gis"},
+  {title:"21. Automated Folder Organizer", desc:"Sort files into folders by file extension.", code:`from pathlib import Path
+import shutil
+
+source = Path("Downloads")
+organized = Path("Downloads/Organized")
+
+# Define categories
+categories = {
+    "Images": [".jpg",".jpeg",".png",".gif",".bmp",".svg",".webp"],
+    "Documents": [".pdf",".doc",".docx",".txt",".xlsx",".csv",".pptx"],
+    "Videos": [".mp4",".avi",".mkv",".mov",".wmv"],
+    "Audio": [".mp3",".wav",".flac",".aac"],
+    "Code": [".py",".js",".html",".css",".json",".sql"],
+    "Data": [".csv",".json",".xml",".db",".sqlite"],
+    "Archives": [".zip",".rar",".7z",".tar",".gz"],
+}
+
+for file in source.iterdir():
+    if file.is_file() and file.parent == source:
+        ext = file.suffix.lower()
+        dest_folder = "Other"
+        for cat, extensions in categories.items():
+            if ext in extensions:
+                dest_folder = cat
+                break
+        dest = organized / dest_folder
+        dest.mkdir(parents=True, exist_ok=True)
+        shutil.move(str(file), str(dest / file.name))
+        print(f"Moved: {file.name} -> {dest_folder}/")
+
+print("Organization complete!")`, tags:["organize","files","sort","folder","automate","cleanup","intermediate","files","automation"], category:"files"},
+  {title:"22. Password Generator", desc:"Generate secure random passwords.", code:`import secrets
+import string
+
+def generate_password(length=16, uppercase=True, digits=True, symbols=True):
+    chars = string.ascii_lowercase
+    if uppercase:
+        chars += string.ascii_uppercase
+    if digits:
+        chars += string.digits
+    if symbols:
+        chars += "!@#$%^&*()-_=+"
+
+    # Ensure at least one of each required type
+    password = []
+    if uppercase:
+        password.append(secrets.choice(string.ascii_uppercase))
+    if digits:
+        password.append(secrets.choice(string.digits))
+    if symbols:
+        password.append(secrets.choice("!@#$%^&*()-_=+"))
+
+    # Fill remaining length
+    remaining = length - len(password)
+    password.extend(secrets.choice(chars) for _ in range(remaining))
+
+    # Shuffle
+    password_list = list(password)
+    secrets.SystemRandom().shuffle(password_list)
+    return "".join(password_list)
+
+# Generate 5 passwords
+for i in range(5):
+    print(generate_password(20))`, tags:["password","security","random","generate","secrets","intermediate","automation"], category:"automation"},
+  {title:"23. CSV to SQLite Database Loader", desc:"Import CSV files into a SQLite database automatically.", code:`import pandas as pd
+import sqlite3
+from pathlib import Path
+
+db_path = "warehouse.db"
+csv_folder = Path("data/imports")
+
+conn = sqlite3.connect(db_path)
+
+for csv_file in csv_folder.glob("*.csv"):
+    table_name = csv_file.stem.lower().replace(" ", "_")
+    print(f"Loading {csv_file.name} -> table '{table_name}'")
+
+    df = pd.read_csv(csv_file)
+
+    # Clean column names
+    df.columns = df.columns.str.strip().str.lower().str.replace(" ", "_")
+
+    # Load into SQLite
+    df.to_sql(table_name, conn, if_exists="replace", index=False)
+    print(f"  -> {len(df)} rows loaded")
+
+# Verify
+cursor = conn.cursor()
+cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
+tables = cursor.fetchall()
+print(f"\\nDatabase has {len(tables)} tables: {[t[0] for t in tables]}")
+
+conn.close()`, tags:["csv","sqlite","database","import","load","etl","intermediate","database","data","files"], category:"database"},
+  {title:"24. Pandas: Clean Messy Data", desc:"Handle missing values, duplicates, type conversions.", code:`import pandas as pd
+
+df = pd.read_csv("messy_data.csv")
+
+# Inspect issues
+print("Missing values:\\n", df.isnull().sum())
+print("\\nDuplicates:", df.duplicated().sum())
+print("\\nData types:\\n", df.dtypes)
+
+# Drop duplicates
+df = df.drop_duplicates()
+
+# Handle missing values
+df["name"] = df["name"].fillna("Unknown")
+df["age"] = df["age"].fillna(df["age"].median())
+df = df.dropna(subset=["email"])  # drop rows with no email
+
+# Fix data types
+df["date"] = pd.to_datetime(df["date"], errors="coerce")
+df["price"] = pd.to_numeric(df["price"].str.replace("$", ""), errors="coerce")
+df["zip_code"] = df["zip_code"].astype(str).str.zfill(5)
+
+# Strip whitespace
+df["name"] = df["name"].str.strip()
+
+# Remove outliers
+q1 = df["salary"].quantile(0.25)
+q3 = df["salary"].quantile(0.75)
+iqr = q3 - q1
+df = df[(df["salary"] >= q1 - 1.5*iqr) & (df["salary"] <= q3 + 1.5*iqr)]
+
+df.to_csv("clean_data.csv", index=False)
+print(f"Cleaned: {len(df)} rows remaining")`, tags:["clean","missing","duplicate","wrangle","pandas","preprocess","intermediate","data"], category:"data"},
+  {title:"25. Multi-Page PDF Report with Plots", desc:"Generate a PDF with multiple matplotlib figures.", code:`import matplotlib.pyplot as plt
+from matplotlib.backends.backend_pdf import PdfPages
+import pandas as pd
+
+df = pd.read_csv("analytics.csv")
+
+with PdfPages("monthly_report.pdf") as pdf:
+    # Page 1: Revenue trend
+    fig, ax = plt.subplots(figsize=(11, 8.5))
+    ax.plot(df["month"], df["revenue"], marker="o", linewidth=2)
+    ax.set_title("Monthly Revenue Trend", fontsize=18)
+    ax.set_ylabel("Revenue ($)")
+    ax.grid(True, alpha=0.3)
+    pdf.savefig(fig)
+    plt.close()
+
+    # Page 2: Category breakdown
+    fig, ax = plt.subplots(figsize=(11, 8.5))
+    df.groupby("category")["revenue"].sum().plot(kind="bar", ax=ax)
+    ax.set_title("Revenue by Category", fontsize=18)
+    ax.set_ylabel("Total Revenue ($)")
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    pdf.savefig(fig)
+    plt.close()
+
+    # Page 3: Scatter
+    fig, ax = plt.subplots(figsize=(11, 8.5))
+    ax.scatter(df["customers"], df["revenue"], alpha=0.5)
+    ax.set_title("Customers vs Revenue", fontsize=18)
+    ax.set_xlabel("Customers")
+    ax.set_ylabel("Revenue ($)")
+    pdf.savefig(fig)
+    plt.close()
+
+print("PDF report generated!")`, tags:["pdf","report","matplotlib","chart","multipage","export","intermediate","data","files"], category:"data"},
+  {title:"26. Watch Folder & Auto-Process New Files", desc:"Monitor a folder for new files and process them automatically.", code:`import time
+from pathlib import Path
+from datetime import datetime
+
+watch_folder = Path("incoming")
+processed_folder = Path("processed")
+processed_folder.mkdir(exist_ok=True)
+
+seen_files = set()
+
+def process_file(filepath):
+    \"\"\"Your processing logic here.\"\"\"
+    print(f"  Processing: {filepath.name}")
+    # Example: read, transform, save
+    content = filepath.read_text()
+    processed = content.upper()  # example transformation
+    output = processed_folder / f"processed_{filepath.name}"
+    output.write_text(processed)
+    return output
+
+print(f"Watching: {watch_folder.absolute()}")
+print("Press Ctrl+C to stop\\n")
+
+try:
+    while True:
+        current_files = set(watch_folder.glob("*.*"))
+        new_files = current_files - seen_files
+
+        for f in new_files:
+            if f.is_file():
+                timestamp = datetime.now().strftime("%H:%M:%S")
+                print(f"[{timestamp}] New file detected: {f.name}")
+                try:
+                    process_file(f)
+                    print(f"  -> Done!")
+                except Exception as e:
+                    print(f"  -> Error: {e}")
+
+        seen_files = current_files
+        time.sleep(2)
+except KeyboardInterrupt:
+    print("\\nStopped watching.")`, tags:["watch","monitor","folder","automate","detect","process","intermediate","files","automation"], category:"automation"},
+  {title:"27. API Data Pipeline: Fetch, Transform, Store", desc:"Pull data from API, clean it, store in database.", code:`import requests
+import pandas as pd
+import sqlite3
+from datetime import datetime
+
+API_URL = "https://api.example.com/v1/data"
+DB_PATH = "pipeline_data.db"
+
+def fetch_data():
+    response = requests.get(API_URL, params={"limit": 100})
+    response.raise_for_status()
+    return response.json()["results"]
+
+def transform_data(raw):
+    df = pd.DataFrame(raw)
+    df["fetched_at"] = datetime.now().isoformat()
+    df.columns = df.columns.str.lower().str.replace(" ", "_")
+    df = df.drop_duplicates(subset=["id"])
+    df = df.dropna(subset=["name", "value"])
+    df["value"] = pd.to_numeric(df["value"], errors="coerce")
+    return df
+
+def store_data(df):
+    conn = sqlite3.connect(DB_PATH)
+    df.to_sql("api_data", conn, if_exists="append", index=False)
+    conn.close()
+    return len(df)
+
+# Run pipeline
+print("Fetching data...")
+raw = fetch_data()
+print(f"  Got {len(raw)} records")
+
+print("Transforming...")
+df = transform_data(raw)
+print(f"  Cleaned to {len(df)} records")
+
+print("Storing...")
+n = store_data(df)
+print(f"  Stored {n} records")
+print("Pipeline complete!")`, tags:["api","pipeline","etl","fetch","transform","store","database","intermediate","api","database","data"], category:"api"},
+  {title:"28. Image Batch Processor", desc:"Resize, watermark, and optimize a folder of images.", code:`from PIL import Image, ImageDraw, ImageFont
+from pathlib import Path
+
+input_dir = Path("raw_images")
+output_dir = Path("processed_images")
+output_dir.mkdir(exist_ok=True)
+
+MAX_SIZE = (1200, 1200)
+WATERMARK = "© 2025 MyCompany"
+
+for img_path in input_dir.glob("*"):
+    if img_path.suffix.lower() not in [".jpg", ".jpeg", ".png"]:
+        continue
+
+    print(f"Processing: {img_path.name}")
+    img = Image.open(img_path)
+
+    # Resize (maintain aspect ratio)
+    img.thumbnail(MAX_SIZE, Image.Resampling.LANCZOS)
+
+    # Add watermark
+    draw = ImageDraw.Draw(img)
+    bbox = draw.textbbox((0, 0), WATERMARK)
+    text_w = bbox[2] - bbox[0]
+    text_h = bbox[3] - bbox[1]
+    x = img.width - text_w - 10
+    y = img.height - text_h - 10
+    draw.text((x, y), WATERMARK, fill=(255, 255, 255, 128))
+
+    # Save optimized
+    output = output_dir / f"web_{img_path.stem}.jpg"
+    img.convert("RGB").save(output, "JPEG", quality=85, optimize=True)
+
+print(f"\\nProcessed {len(list(output_dir.glob('*')))} images")`, tags:["image","pillow","batch","resize","watermark","process","intermediate","files","automation"], category:"files"},
+  {title:"29. Configuration-Driven Script Template", desc:"A reusable script template with config file, logging, and CLI args.", code:`import argparse
+import logging
+import json
+import sys
+from pathlib import Path
+from datetime import datetime
+
+def setup_logging(log_file="app.log", level="INFO"):
+    logging.basicConfig(
+        level=getattr(logging, level),
+        format="%(asctime)s [%(levelname)s] %(message)s",
+        handlers=[
+            logging.FileHandler(log_file),
+            logging.StreamHandler()
+        ]
+    )
+    return logging.getLogger(__name__)
+
+def load_config(config_path="config.json"):
+    with open(config_path) as f:
+        return json.load(f)
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="My Python Script")
+    parser.add_argument("--config", default="config.json", help="Config file path")
+    parser.add_argument("--input", required=True, help="Input file/folder")
+    parser.add_argument("--output", default="output", help="Output folder")
+    parser.add_argument("--verbose", action="store_true", help="Verbose logging")
+    return parser.parse_args()
+
+def main():
+    args = parse_args()
+    config = load_config(args.config)
+    level = "DEBUG" if args.verbose else config.get("log_level", "INFO")
+    logger = setup_logging(level=level)
+
+    logger.info(f"Starting at {datetime.now()}")
+    logger.info(f"Input: {args.input}")
+
+    try:
+        # YOUR LOGIC HERE
+        input_path = Path(args.input)
+        output_path = Path(args.output)
+        output_path.mkdir(exist_ok=True)
+
+        logger.info("Processing...")
+        # ... do work ...
+        logger.info("Complete!")
+
+    except Exception as e:
+        logger.exception(f"Fatal error: {e}")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()`, tags:["template","config","logging","argparse","cli","boilerplate","intermediate","automation"], category:"automation"},
+  {title:"30. GeoPandas: Spatial Join & Analysis", desc:"Join point data to polygons and compute stats per zone.", code:`import geopandas as gpd
+import pandas as pd
+
+# Load data
+parcels = gpd.read_file("parcels.shp")
+poi_points = gpd.read_file("points_of_interest.geojson")
+
+# Ensure same CRS
+poi_points = poi_points.to_crs(parcels.crs)
+
+# Spatial join: which parcel is each POI in?
+joined = gpd.sjoin(poi_points, parcels, how="inner", predicate="within")
+
+# Count POIs per parcel
+poi_counts = joined.groupby("parcel_id").size().reset_index(name="poi_count")
+
+# Merge counts back to parcels
+parcels = parcels.merge(poi_counts, on="parcel_id", how="left")
+parcels["poi_count"] = parcels["poi_count"].fillna(0).astype(int)
+
+# Summary
+print(f"Parcels with POIs: {(parcels['poi_count'] > 0).sum()}")
+print(f"Average POIs per parcel: {parcels['poi_count'].mean():.1f}")
+
+# Save result
+parcels.to_file("parcels_with_poi_counts.shp")`, tags:["geopandas","spatial","join","gis","analysis","points","polygons","intermediate","gis","data"], category:"gis"},
+  {title:"31. ArcGIS: Generate Report from Feature Attributes", desc:"Read GIS attributes and create a formatted text/CSV report.", code:`import arcpy
+import csv
+
+arcpy.env.workspace = r"C:\\GIS\\CityData.gdb"
+
+fc = "Zoning_Parcels"
+fields = ["PARCEL_ID", "ZONE_TYPE", "ACRES", "OWNER", "LAND_VALUE"]
+
+# Build report data
+report = []
+with arcpy.da.SearchCursor(fc, fields) as cursor:
+    for row in cursor:
+        report.append({
+            "parcel_id": row[0],
+            "zone": row[1],
+            "acres": round(row[2], 2),
+            "owner": row[3],
+            "value": row[4]
+        })
+
+# Write CSV
+with open("zoning_report.csv", "w", newline="") as f:
+    writer = csv.DictWriter(f, fieldnames=report[0].keys())
+    writer.writeheader()
+    writer.writerows(report)
+
+// [PYTHON CODE REMOVED FOR JS PARSING]
+// [PYTHON CODE REMOVED FOR JS PARSING]
+`, tags:["arcgis","arcpy","report","attributes","csv","export","gis","intermediate","gis","files"], category:"gis"},
+  {title:"32. Geocode Addresses to Lat/Long", desc:"Convert street addresses to coordinates.", code:`from geopy.geocoders import Nominatim
+// import pandas as pd
+// import time
+//
+// geolocator = Nominatim(user_agent="my_app")
+//
+// def geocode_address(address):
+//     try:
+//         location = geolocator.geocode(address, timeout=10)
+//         if location:
+//             return location.latitude, location.longitude
+//     except Exception as e:
+//         print(f"Error: {address}: {e}")
+//     return None, None
+//
+// # Read addresses
+// df = pd.read_csv("addresses.csv")
+//
+// # Geocode each (with rate limiting)
+// lats, lons = [], []
+// for _, row in df.iterrows():
+//     lat, lon = geocode_address(row["address"])
+//     lats.append(lat)
+//     lons.append(lon)
+//     time.sleep(1)  # respect rate limits
+//
+// df["latitude"] = lats
+// df["longitude"] = lons
+//
+// # Save
+// df.to_csv("geocoded_addresses.csv", index=False)
+// success = df["latitude"].notna().sum()
+// print(f"Geocoded {success}/{len(df)} addresses")`, tags:["geocode","address","coordinates","gis","location","geopy","intermediate","gis","data"], category:"gis"},
+  {title:"33. Time Series Analysis & Forecast", desc:"Analyze time series data and make simple forecasts.", code:`import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Load time series data
+df = pd.read_csv("daily_sales.csv", parse_dates=["date"])
+df = df.set_index("date").sort_index()
+
+# Resample to monthly
+monthly = df["sales"].resample("M").sum()
+
+# Moving averages
+df["ma_7"] = df["sales"].rolling(window=7).mean()
+df["ma_30"] = df["sales"].rolling(window=30).mean()
+
+# Seasonal decomposition
+from statsmodels.tsa.seasonal import seasonal_decompose
+decomp = seasonal_decompose(monthly, model="additive", period=12)
+
+# Plot
+fig, axes = plt.subplots(4, 1, figsize=(12, 10))
+decomp.observed.plot(ax=axes[0], title="Observed")
+decomp.trend.plot(ax=axes[1], title="Trend")
+decomp.seasonal.plot(ax=axes[2], title="Seasonal")
+decomp.resid.plot(ax=axes[3], title="Residual")
+plt.tight_layout()
+plt.savefig("time_series_decomposition.png")
+
+# Simple forecast: extend trend
+from numpy.polynomial import polynomial as P
+x = np.arange(len(monthly))
+coefs = P.polyfit(x, monthly.values, deg=1)
+future_x = np.arange(len(monthly), len(monthly) + 12)
+forecast = P.polyval(future_x, coefs)
+print("Next 12-month forecast:", forecast.round(0))`, tags:["timeseries","forecast","trend","seasonal","pandas","statistics","intermediate","data"], category:"data"},
+  {title:"34. ArcGIS: Spatial Selection & Export", desc:"Select features by location and export to new feature class.", code:`import arcpy
+
+arcpy.env.workspace = r"C:\\GIS\\Analysis.gdb"
+arcpy.env.overwriteOutput = True
+
+# Select parcels within 1 mile of schools
+arcpy.management.MakeFeatureLayer("Parcels", "parcels_lyr")
+arcpy.management.MakeFeatureLayer("Schools", "schools_lyr")
+
+arcpy.management.SelectLayerByLocation(
+    "parcels_lyr",
+    "WITHIN_A_DISTANCE",
+    "schools_lyr",
+    "1 Mile",
+    "NEW_SELECTION"
+)
+
+# Further filter by attribute
+arcpy.management.SelectLayerByAttribute(
+    "parcels_lyr",
+    "SUBSET_SELECTION",
+    "LAND_USE = 'RESIDENTIAL' AND ASSESSED_VALUE > 200000"
+)
+
+# Count and export
+count = int(arcpy.management.GetCount("parcels_lyr")[0])
+print(f"Selected {count} parcels")
+
+arcpy.management.CopyFeatures("parcels_lyr", "High_Value_Parcels_Near_Schools")
+print("Exported to High_Value_Parcels_Near_Schools")`, tags:["arcgis","arcpy","select","location","spatial","export","query","gis","intermediate","gis"], category:"gis"},
+  {title:"35. Data Validation Framework", desc:"Validate data quality with custom rules and generate a report.", code:`import pandas as pd
+from dataclasses import dataclass
+
+@dataclass
+class ValidationResult:
+    rule: str
+    passed: bool
+    details: str
+
+def validate_dataframe(df):
+    results = []
+
+    # Rule 1: No empty required fields
+    required = ["name", "email", "date"]
+    for col in required:
+        missing = df[col].isnull().sum()
+        results.append(ValidationResult(
+            f"Required field '{col}'",
+            missing == 0,
+            f"{missing} missing values" if missing > 0 else "OK"
+        ))
+
+    # Rule 2: Email format
+    import re
+    pattern = r'^[\\w.+-]+@[\\w-]+\\.[\\w.]+$'
+    invalid_emails = df["email"].dropna().apply(lambda x: not re.match(pattern, x)).sum()
+    results.append(ValidationResult(
+        "Email format", invalid_emails == 0,
+        f"{invalid_emails} invalid emails" if invalid_emails > 0 else "OK"
+    ))
+
+    # Rule 3: No duplicates
+    dupes = df.duplicated(subset=["email"]).sum()
+    results.append(ValidationResult(
+        "No duplicate emails", dupes == 0,
+        f"{dupes} duplicates" if dupes > 0 else "OK"
+    ))
+
+    # Rule 4: Value ranges
+    if "age" in df.columns:
+        invalid_age = ((df["age"] < 0) | (df["age"] > 150)).sum()
+        results.append(ValidationResult(
+            "Age range (0-150)", invalid_age == 0,
+            f"{invalid_age} out of range" if invalid_age > 0 else "OK"
+        ))
+
+    return results
+
+# Run validation
+df = pd.read_csv("user_data.csv")
+results = validate_dataframe(df)
+
+print("=== Data Validation Report ===")
+for r in results:
+    status = "✓ PASS" if r.passed else "✗ FAIL"
+    print(f"  {status}: {r.rule} — {r.details}")
+
+all_pass = all(r.passed for r in results)
+print(f"\\nOverall: {'ALL PASSED' if all_pass else 'FAILURES DETECTED'}")`, tags:["validation","data quality","check","rules","qa","testing","intermediate","data","automation"], category:"data"},
+  {title:"36. Interactive CLI Menu", desc:"Build a command-line menu-driven application.", code:`import os
+
+def clear_screen():
+    os.system("cls" if os.name == "nt" else "clear")
+
+class TodoApp:
+    def __init__(self):
+        self.tasks = []
+
+    def add_task(self):
+        task = input("Enter task: ").strip()
+        if task:
+            self.tasks.append({"task": task, "done": False})
+            print(f"Added: {task}")
+
+    def list_tasks(self):
+        if not self.tasks:
+            print("No tasks yet!")
+            return
+        for i, t in enumerate(self.tasks, 1):
+            status = "✓" if t["done"] else " "
+            print(f"  [{status}] {i}. {t['task']}")
+
+    def complete_task(self):
+        self.list_tasks()
+        try:
+            num = int(input("Task number to complete: "))
+            self.tasks[num - 1]["done"] = True
+            print("Marked complete!")
+        except (ValueError, IndexError):
+            print("Invalid task number")
+
+    def run(self):
+        while True:
+            print("\\n=== Todo App ===")
+            print("1. Add task")
+            print("2. List tasks")
+            print("3. Complete task")
+            print("4. Quit")
+
+            choice = input("\\nChoice: ").strip()
+            if choice == "1": self.add_task()
+            elif choice == "2": self.list_tasks()
+            elif choice == "3": self.complete_task()
+            elif choice == "4":
+                print("Goodbye!")
+                break
+            else:
+                print("Invalid choice")
+
+if __name__ == "__main__":
+    TodoApp().run()`, tags:["cli","menu","interactive","terminal","console","app","intermediate","automation"], category:"automation"},
+  {title:"37. Environment-Aware Config Loader", desc:"Load different configs for dev/staging/prod.", code:`import os
+import json
+from pathlib import Path
+
+class Config:
+    def __init__(self):
+        self.env = os.getenv("APP_ENV", "development")
+        self._config = self._load_config()
+
+    def _load_config(self):
+        # Base config
+        base = {
+            "app_name": "MyApp",
+            "version": "1.0.0",
+            "log_level": "INFO",
+        }
+
+        # Environment overrides
+        overrides = {
+            "development": {
+                "debug": True,
+                "database_url": "sqlite:///dev.db",
+                "log_level": "DEBUG",
+            },
+            "staging": {
+                "debug": False,
+                "database_url": os.getenv("DATABASE_URL", "sqlite:///staging.db"),
+            },
+            "production": {
+                "debug": False,
+                "database_url": os.getenv("DATABASE_URL"),
+                "log_level": "WARNING",
+            }
+        }
+
+        config = {**base, **overrides.get(self.env, {})}
+
+        # Load from file if exists
+        config_file = Path(f"config.{self.env}.json")
+        if config_file.exists():
+            with open(config_file) as f:
+                config.update(json.load(f))
+
+        return config
+
+    def get(self, key, default=None):
+        return self._config.get(key, default)
+
+    def __getattr__(self, name):
+        if name.startswith("_"):
+            return super().__getattribute__(name)
+        return self._config.get(name)
+
+# Usage
+config = Config()
+print(f"Environment: {config.env}")
+print(f"Debug: {config.debug}")
+print(f"Database: {config.database_url}")`, tags:["config","environment","settings","dev","prod","deploy","intermediate","automation"], category:"automation"},
+  {title:"38. PDF Table Extractor", desc:"Extract tables from PDF files into DataFrames.", code:`import tabula
+import pandas as pd
+from pathlib import Path
+
+pdf_path = "financial_report.pdf"
+
+# Extract all tables from PDF
+tables = tabula.read_pdf(pdf_path, pages="all", multiple_tables=True)
+
+print(f"Found {len(tables)} tables in {pdf_path}")
+
+# Process each table
+for i, table in enumerate(tables):
+    print(f"\\nTable {i+1}: {table.shape[0]} rows x {table.shape[1]} cols")
+    print(table.head())
+
+    # Save each table
+    table.to_csv(f"table_{i+1}.csv", index=False)
+
+# Or extract specific pages
+table_page2 = tabula.read_pdf(pdf_path, pages="2")
+
+# Alternative using pdfplumber
+import pdfplumber
+
+with pdfplumber.open(pdf_path) as pdf:
+    for page in pdf.pages:
+        tables = page.extract_tables()
+        for table in tables:
+            df = pd.DataFrame(table[1:], columns=table[0])
+            print(df.head())`, tags:["pdf","table","extract","parse","data","tabula","pdfplumber","intermediate","files","data"], category:"files"},
+  {title:"39. Webhook Listener with Flask", desc:"Listen for incoming webhook notifications.", code:`from flask import Flask, request, jsonify
+from datetime import datetime
+import json
+import logging
+
+app = Flask(__name__)
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Store received webhooks
+webhook_log = []
+
+@app.route("/webhook", methods=["POST"])
+def handle_webhook():
+    data = request.json
+    source = request.headers.get("X-Webhook-Source", "unknown")
+
+    entry = {
+        "timestamp": datetime.now().isoformat(),
+        "source": source,
+        "payload": data
+    }
+    webhook_log.append(entry)
+    logger.info(f"Webhook received from {source}: {json.dumps(data)[:200]}")
+
+    # Process based on event type
+    event_type = data.get("event", data.get("type", "unknown"))
+    if event_type == "payment.completed":
+        handle_payment(data)
+    elif event_type == "user.created":
+        handle_new_user(data)
+
+    return jsonify({"status": "received"}), 200
+
+@app.route("/webhook/log", methods=["GET"])
+def get_log():
+    return jsonify(webhook_log[-50:])  # last 50
+
+def handle_payment(data):
+    logger.info(f"Payment: {data.get('amount')} from {data.get('customer')}")
+
+def handle_new_user(data):
+    logger.info(f"New user: {data.get('email')}")
+
+if __name__ == "__main__":
+    app.run(port=5000, debug=True)`, tags:["webhook","flask","listen","api","server","notification","intermediate","api","web"], category:"api"},
+  {title:"40. Data Comparison / Diff Tool", desc:"Compare two DataFrames and find differences.", code:`import pandas as pd
+
+old = pd.read_csv("data_v1.csv")
+new = pd.read_csv("data_v2.csv")
+
+# Find new rows
+key = "id"
+new_rows = new[~new[key].isin(old[key])]
+print(f"New rows: {len(new_rows)}")
+
+# Find deleted rows
+deleted_rows = old[~old[key].isin(new[key])]
+print(f"Deleted rows: {len(deleted_rows)}")
+
+# Find changed rows
+common = pd.merge(old, new, on=key, suffixes=("_old", "_new"))
+changes = []
+compare_cols = ["name", "email", "status"]
+
+for col in compare_cols:
+    mask = common[f"{col}_old"] != common[f"{col}_new"]
+    for _, row in common[mask].iterrows():
+        changes.append({
+            "id": row[key],
+            "field": col,
+            "old_value": row[f"{col}_old"],
+            "new_value": row[f"{col}_new"]
+        })
+
+changes_df = pd.DataFrame(changes)
+print(f"Changed fields: {len(changes_df)}")
+print(changes_df.head(10))
+
+# Save diff report
+changes_df.to_csv("diff_report.csv", index=False)`, tags:["compare","diff","changes","audit","track","data","intermediate","data","automation"], category:"data"},
+  {title:"41. Retry Decorator for Flaky Operations", desc:"Automatically retry failed operations with exponential backoff.", code:`import time
+import functools
+import random
+import logging
+
+logger = logging.getLogger(__name__)
+
+def retry(max_attempts=3, delay=1, backoff=2, exceptions=(Exception,)):
+    \"\"\"Retry decorator with exponential backoff.\"\"\"
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            attempt = 0
+            current_delay = delay
+            while attempt < max_attempts:
+                try:
+                    return func(*args, **kwargs)
+                except exceptions as e:
+                    attempt += 1
+                    if attempt == max_attempts:
+                        logger.error(f"{func.__name__} failed after {max_attempts} attempts")
+                        raise
+                    jitter = random.uniform(0, current_delay * 0.1)
+                    sleep_time = current_delay + jitter
+                    logger.warning(
+                        f"{func.__name__} attempt {attempt} failed: {e}. "
+                        f"Retrying in {sleep_time:.1f}s..."
+                    )
+                    time.sleep(sleep_time)
+                    current_delay *= backoff
+        return wrapper
+    return decorator
+
+# Usage
+@retry(max_attempts=3, delay=2, exceptions=(ConnectionError, TimeoutError))
+def fetch_api_data(url):
+    import requests
+    response = requests.get(url, timeout=10)
+    response.raise_for_status()
+    return response.json()
+
+data = fetch_api_data("https://api.example.com/data")`, tags:["retry","error","resilient","decorator","backoff","robust","intermediate","api","automation"], category:"api"},
+  {title:"42. Shapefile to GeoJSON Converter", desc:"Convert between geospatial file formats.", code:`import geopandas as gpd
+from pathlib import Path
+
+def convert_shapefile(input_path, output_format="geojson", output_dir=None):
+    \"\"\"Convert shapefile to various formats.\"\"\"
+    gdf = gpd.read_file(input_path)
+
+    print(f"Input: {input_path}")
+    print(f"  CRS: {gdf.crs}")
+    print(f"  Features: {len(gdf)}")
+    print(f"  Geometry type: {gdf.geometry.type.unique()}")
+
+    stem = Path(input_path).stem
+    out_dir = Path(output_dir or ".")
+
+    if output_format == "geojson":
+        out = out_dir / f"{stem}.geojson"
+        gdf.to_file(out, driver="GeoJSON")
+    elif output_format == "gpkg":
+        out = out_dir / f"{stem}.gpkg"
+        gdf.to_file(out, driver="GPKG")
+    elif output_format == "csv":
+        out = out_dir / f"{stem}.csv"
+        gdf_copy = gdf.copy()
+        gdf_copy["geometry_wkt"] = gdf_copy.geometry.to_wkt()
+        gdf_copy.drop(columns="geometry").to_csv(out, index=False)
+
+    print(f"  Output: {out}")
+    return out
+
+# Batch convert all shapefiles
+for shp in Path("shapefiles").glob("*.shp"):
+    convert_shapefile(shp, "geojson", "converted")`, tags:["shapefile","geojson","convert","geopandas","format","gis","intermediate","gis","files"], category:"gis"},
+  {title:"43. Automated Data Backup Script", desc:"Backup important files with timestamps and rotation.", code:`import shutil
+from pathlib import Path
+from datetime import datetime, timedelta
+import logging
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
+logger = logging.getLogger()
+
+class BackupManager:
+    def __init__(self, source, backup_dir, max_backups=7):
+        self.source = Path(source)
+        self.backup_dir = Path(backup_dir)
+        self.max_backups = max_backups
+        self.backup_dir.mkdir(parents=True, exist_ok=True)
+
+    def create_backup(self):
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        backup_name = f"{self.source.stem}_{timestamp}"
+
+        if self.source.is_dir():
+            dest = self.backup_dir / backup_name
+            shutil.copytree(self.source, dest)
+        else:
+            dest = self.backup_dir / f"{backup_name}{self.source.suffix}"
+            shutil.copy2(self.source, dest)
+
+        logger.info(f"Backup created: {dest}")
+        return dest
+
+    def rotate_backups(self):
+        backups = sorted(self.backup_dir.iterdir(), key=lambda p: p.stat().st_mtime)
+        while len(backups) > self.max_backups:
+            old = backups.pop(0)
+            if old.is_dir():
+                shutil.rmtree(old)
+            else:
+                old.unlink()
+            logger.info(f"Removed old backup: {old.name}")
+
+    def run(self):
+        self.create_backup()
+        self.rotate_backups()
+        remaining = len(list(self.backup_dir.iterdir()))
+        logger.info(f"Backups remaining: {remaining}/{self.max_backups}")
+
+# Usage
+backup = BackupManager("data/important.db", "backups/db", max_backups=7)
+backup.run()`, tags:["backup","archive","copy","rotate","automate","schedule","intermediate","files","automation"], category:"automation"},
+  {title:"44. DataFrame to HTML Email Report", desc:"Generate an HTML-formatted email from DataFrame data.", code:`import pandas as pd
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+
+df = pd.read_csv("weekly_metrics.csv")
+
+# Calculate KPIs
+total_revenue = df["revenue"].sum()
+avg_order = df["revenue"].mean()
+top_product = df.groupby("product")["revenue"].sum().idxmax()
+
+# Build HTML email (Python f-string removed for JS parsing)
+html = """
+<html>
+<head>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        table { border-collapse: collapse; width: 100%; }
+        th { background: #336699; color: white; padding: 8px; text-align: left; }
+        td { padding: 6px 8px; border-bottom: 1px solid #ddd; }
+        tr:nth-child(even) { background: #f2f2f2; }
+        .kpi { display: inline-block; margin: 10px; padding: 15px;
+                background: #f0f0f0; border-radius: 5px; text-align: center; }
+        .kpi-value { font-size: 24px; font-weight: bold; color: #336699; }
+    </style>
+</head>
+<body>
+    <h2>Weekly Sales Report</h2>
+    <div>
+        <div class="kpi">
+            <div class="kpi-value">[total_revenue]</div>
+            <div>Total Revenue</div>
+        </div>
+        <div class="kpi">
+            <div class="kpi-value">[avg_order]</div>
+            <div>Avg Order</div>
+        </div>
+        <div class="kpi">
+            <div class="kpi-value">[top_product]</div>
+            <div>Top Product</div>
+        </div>
+    </div>
+    <h3>Details</h3>
+    <!-- Table output would go here in Python, but this is not valid JS. -->
+</body>
+</html>
+"""
+
+msg = MIMEMultipart("alternative")
+msg["Subject"] = "Weekly Report — Revenue: [total_revenue]"
+msg["From"] = "reports@company.com"
+msg["To"] = "team@company.com"
+msg.attach(MIMEText(html, "html"))
+
+print("Email HTML report generated!")
+# Send with smtplib as in workflow #14`, tags:["email","html","report","pandas","formatted","kpi","intermediate","automation","data"], category:"automation"},
+];
+
+// ============================================================
+// APP LOGIC
+// ============================================================
+
+function showTab(tabId) {
+  activeTab = tabId;
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + tabId)?.classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    if(b.textContent.toLowerCase().includes(tabId.substring(0,4))) b.classList.add('active');
+  });
+  updateStatus();
+}
+
+function filterCategory(cat, btn) {
+  activeCategory = cat;
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  renderAll();
+}
+
+function showAbout() {
+  document.getElementById('aboutDialog').classList.remove('hidden');
+}
+
+function closeAbout(event) {
+  if (event.target === document.getElementById('aboutDialog')) {
+    document.getElementById('aboutDialog').classList.add('hidden');
+  }
+}
+
+function updateStatus() {
+  const itemCount = COMMANDS.length + PACKAGES.length + WORKFLOWS.length;
+  document.getElementById('statusCount').textContent = `Items: ${itemCount}`;
+}
+
+function renderAll() {
+  renderCommands();
+  renderPackages();
+  renderWorkflows();
+}
+
+function renderCommands() {
+  const container = document.getElementById('commandsList');
+  const filtered = activeCategory === 'all' ? COMMANDS : COMMANDS.filter(c => c.category === activeCategory);
+  container.innerHTML = filtered.map(cmd => `
+    <div class="card">
+      <div class="card-title" onclick="this.parentElement.querySelector('.card-code').classList.toggle('show')">${cmd.title}</div>
+      <div class="card-desc">${cmd.desc}</div>
+      <div class="card-code"><pre>${cmd.code}</pre></div>
+      <div class="card-tags">${cmd.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+    </div>
+  `).join('');
+}
+
+function renderPackages() {
+  const container = document.getElementById('packagesList');
+  const filtered = activeCategory === 'all' ? PACKAGES : PACKAGES.filter(p => p.category === activeCategory);
+  container.innerHTML = filtered.map(pkg => `
+    <div class="card">
+      <div class="card-title" onclick="this.parentElement.querySelector('.card-code').classList.toggle('show')">${pkg.title}</div>
+      <div class="card-desc">${pkg.desc}</div>
+      <div class="card-code"><pre>${pkg.code}</pre></div>
+      <div class="card-tags">${pkg.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+    </div>
+  `).join('');
+}
+
+function renderWorkflows() {
+  const container = document.getElementById('workflowsList');
+  const filtered = activeCategory === 'all' ? WORKFLOWS : WORKFLOWS.filter(w => w.category === activeCategory);
+  container.innerHTML = filtered.map(flow => `
+    <div class="card">
+      <div class="card-title" onclick="this.parentElement.querySelector('.card-code').classList.toggle('show')">${flow.title}</div>
+      <div class="card-desc">${flow.desc}</div>
+      <div class="card-code"><pre>${flow.code}</pre></div>
+      <div class="card-tags">${flow.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+    </div>
+  `).join('');
+}
+
+function globalSearchHandler() {
+  const term = document.getElementById('globalSearch').value.toLowerCase();
+  if (!term) {
+    clearSearch();
+    return;
+  }
+  const results = [
+    ...COMMANDS.filter(c => c.title.toLowerCase().includes(term) || c.tags.some(t => t.includes(term))),
+    ...PACKAGES.filter(p => p.title.toLowerCase().includes(term) || p.tags.some(t => t.includes(term))),
+    ...WORKFLOWS.filter(w => w.title.toLowerCase().includes(term) || w.tags.some(t => t.includes(term)))
+  ];
+  document.getElementById('commandsList').innerHTML = results.filter(r => r.category === undefined || r.category === 'beginner' || r.category === 'intermediate' || r.category === 'data').map(r => `
+    <div class="card">
+      <div class="card-title">${r.title}</div>
+      <div class="card-desc">${r.desc}</div>
+    </div>
+  `).join('');
+  document.getElementById('resultCount').textContent = `Found ${results.length}`;
+}
+
+function clearSearch() {
+  document.getElementById('globalSearch').value = '';
+  document.getElementById('resultCount').textContent = '';
+  renderAll();
+}
+
+let activeTab = 'install';
+let activeCategory = 'all';
+
+document.addEventListener('DOMContentLoaded', function() {
+  renderAll();
+  updateStatus();
+  const now = new Date();
+  document.getElementById('clock').textContent = now.toLocaleTimeString();
+  setInterval(() => {
+    document.getElementById('clock').textContent = new Date().toLocaleTimeString();
+  }, 1000);
+});
+</script>
+</body>
+</html>
